@@ -22,4 +22,5 @@ The Dual Shield is a clinical decision support framework engineered for high-vol
 - System Architecture: /architecture
 - Clinical Evidence & Citations: /evidence
 - Field Journal & Incident Audits: /journal
+- Data-Driven Stitch Report (MedGemma 2.5 CPOE & 0.942 AUROC IDH Prediction): /blog/medgemma-cpoe-idh-prediction-2026
 - Deployment Inquiries & Pilot Requests: /partner

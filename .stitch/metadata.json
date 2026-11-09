@@ -1,0 +1,42 @@
+{
+  "projectId": "503366360860058565",
+  "projectName": "Pharos Dual Shield Clinical Vitality SEO Hub",
+  "designSystem": ".stitch/DESIGN.md",
+  "siteManifest": ".stitch/SITE.md",
+  "batonFile": ".stitch/next-prompt.md",
+  "screens": {
+    "medgemma-cpoe-idh-prediction-2026": {
+      "id": "stitch-screen-medgemma-2026-01",
+      "pageSlug": "medgemma-cpoe-idh-prediction-2026",
+      "targetCohort": "18-24",
+      "sourceInsightId": 1,
+      "width": 1440,
+      "height": 2400,
+      "htmlPath": "sdk/generated-pages/medgemma-cpoe-idh-prediction-2026.html",
+      "hostRoutePath": "../dashboard/src/pages/blog/medgemma-cpoe-idh-prediction-2026.astro",
+      "status": "AB_TESTING"
+    },
+    "nephrology-ward-cpoe-override-audit-2026": {
+      "id": "stitch-screen-nephrology-ward-cpoe-ove-1179",
+      "pageSlug": "nephrology-ward-cpoe-override-audit-2026",
+      "targetCohort": "35-44",
+      "sourceInsightId": 2,
+      "width": 1440,
+      "height": 2400,
+      "htmlPath": "sdk/generated-pages/nephrology-ward-cpoe-override-audit-2026.html",
+      "hostRoutePath": "/blog/nephrology-ward-cpoe-override-audit-2026",
+      "status": "AB_TESTING"
+    },
+    "edge-onnx-dialysis-telemetry-benchmarks-2026": {
+      "id": "stitch-screen-edge-onnx-dialysis-telem-1297",
+      "pageSlug": "edge-onnx-dialysis-telemetry-benchmarks-2026",
+      "targetCohort": "25-34",
+      "sourceInsightId": 3,
+      "width": 1440,
+      "height": 2400,
+      "htmlPath": "sdk/generated-pages/edge-onnx-dialysis-telemetry-benchmarks-2026.html",
+      "hostRoutePath": "/blog/edge-onnx-dialysis-telemetry-benchmarks-2026",
+      "status": "AB_TESTING"
+    }
+  }
+}

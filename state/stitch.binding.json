@@ -1,0 +1,12 @@
+{
+  "mcp_server": "stitch",
+  "package": "@_davideast/stitch-mcp",
+  "local_repo": "./skills/stitch-mcp",
+  "skills_repo": "./skills/stitch-skills",
+  "project_id": "503366360860058565",
+  "design_system": "Clinical Vitality",
+  "baton_file": "./.stitch/next-prompt.md",
+  "usage_scope": "page_and_variant_generation_only",
+  "bound_to_jules": true,
+  "bound_at": "2026-11-09T15:55:44Z"
+}

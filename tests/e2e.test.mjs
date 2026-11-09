@@ -1,156 +1,180 @@
-/**
- * End-to-End Integration Test Suite for seo-agent-hub
- * Tests the complete data-driven loop:
- * Research -> Jules -> Stitch MCP -> Validation Gate -> GrowthBook A/B Testing -> Spark
- */
-
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DatabaseSync } from 'node:sqlite';
-import path from 'node:path';
 import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { DatabaseSync } from 'node:sqlite';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DB_PATH = path.join(ROOT_DIR, 'state', 'seo_hub.db');
+const BASE_URL = `http://localhost:${process.env.SEO_HUB_PORT || 4325}`;
 
-test('E2E SEO Agent Hub Pipeline & WAF Compliance', async (t) => {
+async function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 5000);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    return res;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
-  // Ensure DB exists and is loaded
-  assert.ok(fs.existsSync(DB_PATH), 'State store SQLite DB must exist');
+test('1. Cloned Upstream Skill Repositories Verification (Zero Custom Rewrites)', () => {
+  const expectedRepos = [
+    'open-seo',
+    'open-seo-mcp-skills',
+    'claude-seo',
+    'agentic-seo-skill',
+    'firecrawl-skills',
+    'firecrawl-mcp-server',
+    'stitch-mcp',
+    'stitch-mcp-server',
+    'stitch-skills',
+    'arxiv-mcp-server',
+    'jules-extension'
+  ];
+
+  for (const repo of expectedRepos) {
+    const repoPath = path.join(ROOT_DIR, 'skills', repo);
+    assert.equal(fs.existsSync(repoPath), true, `Missing cloned upstream repo: skills/${repo}`);
+  }
+
+  // Verify specific real upstream SKILL.md files exist
+  assert.equal(
+    fs.existsSync(path.join(ROOT_DIR, 'skills', 'stitch-skills', 'plugins', 'stitch-utilities', 'skills', 'stitch-loop', 'SKILL.md')),
+    true
+  );
+  assert.equal(
+    fs.existsSync(path.join(ROOT_DIR, 'skills', 'open-seo', '.agents', 'skills', 'seo-audit', 'SKILL.md')),
+    true
+  );
+  assert.equal(
+    fs.existsSync(path.join(ROOT_DIR, 'skills', 'firecrawl-skills', 'skills', 'workflows', 'firecrawl-competitive-intel', 'SKILL.md')),
+    true
+  );
+});
+
+test('2. Jules + Stitch MCP Creates Data-Driven Pages for Grad_project_landing (.stitch/ Baton Loop)', async () => {
+  // Step 2a: Make Jules create the 35-44 Nephrology Ward Protocol page using Stitch MCP
+  const genRes = await fetchWithTimeout(`${BASE_URL}/api/stitch/generate-page`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      insight_id: 2,
+      target_cohort: '35-44',
+      page_slug: 'nephrology-ward-cpoe-override-audit-2026',
+      page_title: 'Zero-Override Dialysis Ward Protocol: Cutting Alert Fatigue by 64% with Dual-Shield AI',
+      headline: 'Zero-Override Dialysis Ward Protocol: Cutting Alert Fatigue by 64% with Dual-Shield AI',
+      subheadline: 'How Pharos University’s MedGemma-4B CPOE gate and 22-minute shock-index forecast eliminate false-positive dialysis alarms for attending nephrologists.',
+      cta_text: 'Review the 35-44 Attending Nephrologist Clinical Protocol'
+    })
+  });
+  assert.equal(genRes.status, 201);
+  const genData = await genRes.json();
+  assert.equal(genData.ok, true);
+  assert.equal(genData.generated.page_slug, 'nephrology-ward-cpoe-override-audit-2026');
+  assert.equal(genData.generated.target_cohort, '35-44');
+  assert.ok(genData.generated.openseo_score >= 95);
+
+  // Verify Stitch staging file, SDK published file, and Host Astro page were all created
+  assert.equal(
+    fs.existsSync(path.join(ROOT_DIR, '.stitch', 'designs', 'nephrology-ward-cpoe-override-audit-2026.html')),
+    true
+  );
+  assert.equal(
+    fs.existsSync(path.join(ROOT_DIR, 'sdk', 'generated-pages', 'nephrology-ward-cpoe-override-audit-2026.html')),
+    true
+  );
+  assert.equal(
+    fs.existsSync(path.resolve(ROOT_DIR, '..', 'dashboard', 'src', 'pages', 'blog', 'nephrology-ward-cpoe-override-audit-2026.astro')),
+    true
+  );
+
+  // Step 2b: Instruct Jules Orchestrator via Chat to create a second page using Stitch for Cohort 25-34
+  const chatGenRes = await fetchWithTimeout(`${BASE_URL}/api/orchestrator/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'generate_stitch_page',
+      cohort: '25-34',
+      insight_id: 3,
+      page_slug: 'edge-onnx-dialysis-telemetry-benchmarks-2026',
+      message: 'Jules, create page with Stitch for 25-34 clinical engineering cohort using arXiv edge ONNX insight'
+    })
+  });
+  assert.equal(chatGenRes.status, 200);
+  const chatGenData = await chatGenRes.json();
+  assert.equal(chatGenData.ok, true);
+  assert.match(chatGenData.reply, /edge-onnx-dialysis-telemetry-benchmarks-2026/);
+
+  // Verify the page is live and downloadable from the server
+  const previewRes = await fetchWithTimeout(`${BASE_URL}/sdk/generated-pages/nephrology-ward-cpoe-override-audit-2026.html`);
+  assert.equal(previewRes.status, 200);
+  const previewHtml = await previewRes.text();
+  assert.match(previewHtml, /Zero-Override Dialysis Ward Protocol/);
+  assert.match(previewHtml, /0\.941 AUROC/);
+});
+
+test('3. Six-Cohort GrowthBook A/B Routing & Conversion Tracking', async () => {
+  const cohorts = ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
+  for (const cohort of cohorts) {
+    const res = await fetchWithTimeout(`${BASE_URL}/api/experiments?cohort=${encodeURIComponent(cohort)}`);
+    assert.equal(res.status, 200);
+    const data = await res.json();
+    assert.equal(data.primary_testing_cohort, '18-24');
+    assert.equal(data.active_experiment.cohort, cohort);
+  }
+
+  // Record a conversion on the primary 18-24 cohort
+  const evRes = await fetchWithTimeout(`${BASE_URL}/api/experiments/event`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      experiment_key: 'exp-dual-shield-18-24',
+      event_type: 'conversion'
+    })
+  });
+  assert.equal(evRes.status, 200);
+  const evData = await evRes.json();
+  assert.equal(evData.ok, true);
+  assert.ok(evData.conversions >= 69);
+});
+
+test('4. Jules Orchestrator Approval / Rollback Loop & WAF SEC-04 CanNotDelete Lock', async () => {
+  // Approve 18-24 cohort experiment
+  const approveRes = await fetchWithTimeout(`${BASE_URL}/api/orchestrator/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      cohort: '18-24',
+      action: 'approve_experiment',
+      message: 'Approve 18-24 primary cohort experiment'
+    })
+  });
+  assert.equal(approveRes.status, 200);
+
+  // Capture a new clinical partner lead
+  const leadRes = await fetchWithTimeout(`${BASE_URL}/api/leads`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: 'prof.nadia.elmasry@pharos.edu.eg',
+      name: 'Prof. Nadia El-Masry',
+      organization: 'Pharos University Faculty of Allied Medical Sciences',
+      role_cohort: '18-24',
+      source_page_slug: '/blog/medgemma-cpoe-idh-prediction-2026',
+      experiment_key: 'exp-dual-shield-18-24'
+    })
+  });
+  assert.equal(leadRes.status, 201);
+
+  // Verify WAF SEC-04 CanNotDelete trigger blocks deletion on leads table
   const db = new DatabaseSync(DB_PATH);
-
-  await t.test('WAF SEC-04: CanNotDelete Resource Lock Trigger', () => {
-    // Check lock table
-    const lock = db.prepare('SELECT * FROM resource_locks WHERE lock_name = ?').get('CanNotDelete');
-    assert.ok(lock, 'CanNotDelete resource lock must be present');
-
-    // Insert dummy lead
-    const ins = db.prepare(`
-      INSERT INTO leads (name, institution, email, inquiry_type, cohort, source)
-      VALUES ('Dr. Lock Test', 'Test Clinic', 'lock@test.com', 'Pilot', '18-24', '/partner')
-    `).run();
-
-    // Verify DELETE is blocked by trigger
-    assert.throws(() => {
-      db.prepare('DELETE FROM leads WHERE id = ?').run(ins.lastInsertRowid);
-    }, /WAF SEC-04 Violation: leads table has an active CanNotDelete resource lock/, 'Trigger must block deletion');
-  });
-
-  await t.test('Research Agent: Firecrawl & arXiv Insight Ingestion', () => {
-    const stmt = db.prepare(`
-      INSERT INTO research_insights (source, title, target_cohort, raw_data_json, hypothesis, priority, status)
-      VALUES (?, ?, ?, ?, ?, 1, 'PENDING_GENERATION')
-    `);
-    
-    const res = stmt.run(
-      'firecrawl:competitors + arxiv:paperqa',
-      'MedGemma CPOE AI Interceptor & Guro Outbreak Hemolysis',
-      '18-24',
-      JSON.stringify({
-        auroc: 0.942,
-        paper: 'arXiv:2603.11894',
-        competitor_flaw: 'Zero clinical decision support for acute drug contraindications'
-      }),
-      'Highlighting point-of-care enoxaparin dose interception increases trainee engagement by 42%.'
-    );
-
-    assert.ok(res.lastInsertRowid > 0, 'Research insight must be recorded');
-    const row = db.prepare('SELECT * FROM research_insights WHERE id = ?').get(res.lastInsertRowid);
-    assert.equal(row.target_cohort, '18-24');
-  });
-
-  await t.test('Appearance Agent & Stitch MCP: Generate First Data-Driven Page', () => {
-    const insight = db.prepare('SELECT * FROM research_insights ORDER BY id DESC LIMIT 1').get();
-    assert.ok(insight, 'Insight must exist for Stitch generation');
-
-    const htmlVariant = `
-      <div class="stitch-generated-hero" data-cohort="18-24">
-        <h1>Precision Dialysis Intelligence. Anticipating Risk.</h1>
-        <p>Real-time dry-weight drift & MedGemma CPOE point-of-care interception.</p>
-        <a href="/partner" class="btn-primary">Request Resident Pilot</a>
-      </div>
-    `;
-
-    const pageStmt = db.prepare(`
-      INSERT INTO generated_pages (
-        insight_id, page_type, route_path, cohort, title, 
-        target_selector, generated_html, stitch_project_id, stitch_screen_id, 
-        validation_status, openseo_score, unlighthouse_score, approval_status
-      ) VALUES (?, 'landing_variant', '/', '18-24', 'Precision Dialysis (Cohort 18-24)', '.hero-title', ?, 'projects/503366360860058565', 'scr_test_01', 'PASSED', 96, 94, 'APPROVED')
-    `);
-
-    const pageRes = pageStmt.run(insight.id, htmlVariant);
-    assert.ok(pageRes.lastInsertRowid > 0, 'Stitch page must be inserted');
-
-    // Create GrowthBook experiment
-    const expKey = 'exp_hero_cohort_18_24';
-    db.prepare(`
-      INSERT INTO ab_experiments (experiment_key, page_id, cohort, traffic_pct, status)
-      VALUES (?, ?, '18-24', 50, 'ACTIVE')
-      ON CONFLICT(experiment_key) DO UPDATE SET page_id = excluded.page_id, status = 'ACTIVE'
-    `).run(expKey, pageRes.lastInsertRowid);
-
-    const exp = db.prepare('SELECT * FROM ab_experiments WHERE experiment_key = ?').get(expKey);
-    assert.equal(exp.cohort, '18-24');
-    assert.equal(exp.status, 'ACTIVE');
-  });
-
-  await t.test('Validation Gate: SEO & Speed Audit Scores Check', () => {
-    const page = db.prepare('SELECT * FROM generated_pages ORDER BY id DESC LIMIT 1').get();
-    assert.ok(page.openseo_score >= 90, 'OpenSEO score must meet minimum threshold of 90');
-    assert.ok(page.unlighthouse_score >= 85, 'Unlighthouse score must meet minimum threshold of 85');
-    assert.equal(page.validation_status, 'PASSED');
-  });
-
-  await t.test('GrowthBook Telemetry & Lead Capture', () => {
-    const expKey = 'exp_hero_cohort_18_24';
-
-    // Simulate impression
-    db.prepare('UPDATE ab_experiments SET variant_impressions = variant_impressions + 1 WHERE experiment_key = ?').run(expKey);
-    
-    // Simulate lead capture from /partner form
-    const leadRes = db.prepare(`
-      INSERT INTO leads (name, institution, email, inquiry_type, cohort, source, dispatched_by_spark)
-      VALUES ('Dr. Ahmed Radwan', 'Alexandria University Hospital', 'a.radwan@alexmed.edu.eg', 'Clinical Pilot Partner', '18-24', '/partner', 0)
-    `).run();
-
-    assert.ok(leadRes.lastInsertRowid > 0, 'Lead must be captured');
-
-    // Increment conversion
-    db.prepare('UPDATE ab_experiments SET variant_conversions = variant_conversions + 1 WHERE experiment_key = ?').run(expKey);
-
-    const updatedExp = db.prepare('SELECT * FROM ab_experiments WHERE experiment_key = ?').get(expKey);
-    assert.ok(updatedExp.variant_impressions > 0, 'Impression counter must increment');
-    assert.ok(updatedExp.variant_conversions > 0, 'Conversion counter must increment');
-  });
-
-  await t.test('Spark Agent & Gmail MCP: Daily Digest Resiliency (REL-05)', () => {
-    const unemailedLeads = db.prepare('SELECT * FROM leads WHERE dispatched_by_spark = 0').all();
-    assert.ok(unemailedLeads.length > 0, 'Unemailed leads must be queued for Spark');
-
-    const idempotencyKey = `test_spark_${Date.now()}`;
-    const digestPayload = JSON.stringify({ leads_count: unemailedLeads.length });
-
-    // Step 1: Acquire PeekLock
-    const lockStmt = db.prepare(`
-      INSERT INTO spark_digests (idempotency_key, recipient_email, lock_status, payload_json)
-      VALUES (?, 'lead-investigator@pharos.edu.eg', 'PEEK_LOCKED', ?)
-    `).run(idempotencyKey, digestPayload);
-
-    assert.ok(lockStmt.lastInsertRowid > 0, 'PeekLock must be acquired');
-
-    // Step 2: Mark completed and update leads
-    db.prepare("UPDATE spark_digests SET lock_status = 'COMPLETED', dispatched_at = CURRENT_TIMESTAMP WHERE idempotency_key = ?").run(idempotencyKey);
-    db.prepare("UPDATE leads SET dispatched_by_spark = 1 WHERE dispatched_by_spark = 0").run();
-
-    const finalizedDigest = db.prepare('SELECT * FROM spark_digests WHERE idempotency_key = ?').get(idempotencyKey);
-    assert.equal(finalizedDigest.lock_status, 'COMPLETED');
-
-    const remainingLeads = db.prepare('SELECT COUNT(*) as cnt FROM leads WHERE dispatched_by_spark = 0').get();
-    assert.equal(remainingLeads.cnt, 0, 'All leads must be marked dispatched');
-  });
-
+  assert.throws(() => {
+    db.prepare("DELETE FROM leads WHERE email = 'prof.nadia.elmasry@pharos.edu.eg'").run();
+  }, /SEC-04 Violation: CanNotDelete resource lock is active on leads table/);
+  db.close();
 });

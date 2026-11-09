@@ -1,90 +1,90 @@
 {
-  "$schema": "https://json.schemastore.org/jules-manifest.json",
-  "version": "1.0.0",
-  "name": "seo-agent-hub",
-  "description": "Declarative Model Context Protocol & GrowthBook Agentic Stack for Data-Driven Page Generation, AEO & A/B Testing",
-  "orchestrator": {
-    "engine": "jules-core",
-    "prompt_file": "agents/orchestrator.md",
-    "timeout_ms": 5000,
-    "max_retries": 3,
-    "state_store": "sqlite:state/seo_hub.db"
+  "$schema": "https://jules.google/schemas/v2/manifest.json",
+  "project_name": "seo-agent-hub",
+  "version": "1.2.0",
+  "description": "Declarative MCP & GrowthBook A/B Agentic SEO Hub powered by Jules, Stitch MCP (google-labs-code/stitch-skills & davideast/stitch-mcp), Firecrawl (firecrawl/skills), arXiv MCP, and OpenSEO (every-app/open-seo & AgriciDaniel/claude-seo)",
+  "state_store": {
+    "driver": "sqlite",
+    "database_path": "./state/seo_hub.db",
+    "schema_path": "./config/sqlite.schema.sql",
+    "pool_isolation": {
+      "orchestrator_tier": "read_write_primary",
+      "research_tier": "write_isolated",
+      "validation_tier": "read_audit"
+    }
+  },
+  "demographics": {
+    "primary_testing_cohort": "18-24",
+    "cohorts": [
+      "18-24",
+      "25-34",
+      "35-44",
+      "45-54",
+      "55-64",
+      "65+"
+    ]
   },
   "agents": {
-    "research": {
-      "name": "Research Agent",
-      "prompt_file": "agents/research.md",
-      "mcp_servers": ["firecrawl", "arxiv", "sqlite"],
-      "primary_operator": "antigravity_or_jules"
+    "orchestrator": {
+      "role": "Jules Core Orchestrator",
+      "operator": "jules",
+      "prompt_path": "./agents/orchestrator.md",
+      "skills": [
+        "./skills/jules-extension/GEMINI.md",
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/stitch-loop/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/site-md/SKILL.md"
+      ],
+      "mcp_bindings": ["sqlite", "stitch", "jules"],
+      "can_approve_mutations": true
     },
-    "appearance": {
-      "name": "Appearance & Page Generation Agent",
-      "prompt_file": "agents/appearance.md",
-      "mcp_servers": ["stitch", "sqlite"],
-      "primary_operator": "jules"
+    "research": {
+      "role": "Web Reconnaissance & Academic Discovery Agent",
+      "operator": "antigravity_or_jules",
+      "routing_manifest": "./config/antigravity.routing.yaml",
+      "prompt_path": "./agents/research.md",
+      "skills": [
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-competitive-intel/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-research-papers/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-lead-gen/SKILL.md",
+        "./skills/open-seo/.agents/skills/keyword-research/SKILL.md",
+        "./skills/open-seo/.agents/skills/competitor-analysis/SKILL.md"
+      ],
+      "mcp_bindings": ["firecrawl", "arxiv", "sqlite"]
     },
     "validation": {
-      "name": "SEO & AEO Validation Gate",
-      "prompt_file": "agents/validation.md",
-      "mcp_servers": ["openseo", "sqlite"],
+      "role": "SEO & AEO Validation Gate",
+      "operator": "jules_worker",
+      "prompt_path": "./agents/validation.md",
+      "skills": [
+        "./skills/open-seo/.agents/skills/seo-audit/SKILL.md",
+        "./skills/open-seo/.agents/skills/seo-report/SKILL.md",
+        "./skills/claude-seo/skills/seo-audit/SKILL.md",
+        "./skills/claude-seo/skills/seo-page/SKILL.md",
+        "./skills/claude-seo/skills/seo-geo/SKILL.md",
+        "./skills/agentic-seo-skill/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-seo-audit/SKILL.md"
+      ],
+      "mcp_bindings": ["openseo", "sqlite"],
       "thresholds": {
-        "min_openseo_score": 90,
-        "min_unlighthouse_score": 85
+        "min_openseo_score": 88,
+        "min_unlighthouse_seo": 90,
+        "require_llms_txt": true,
+        "require_robots_txt": true
       }
     },
-    "spark": {
-      "name": "Communication & Daily Action Agent",
-      "prompt_file": "agents/spark.md",
-      "mcp_servers": ["gmail", "sqlite"],
-      "schedule": "0 8 * * *"
+    "appearance": {
+      "role": "Stitch Page Generation & GrowthBook Cohort Routing Agent",
+      "operator": "jules_stitch",
+      "prompt_path": "./agents/appearance.md",
+      "stitch_config": "./config/stitch.mcp.json",
+      "skills": [
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/stitch-loop/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/generate-design/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/design-md/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/enhance-prompt/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/extract-static-html/SKILL.md"
+      ],
+      "mcp_bindings": ["stitch", "sqlite"]
     }
-  },
-  "mcp_servers": {
-    "stitch": {
-      "endpoint": "https://stitch.googleapis.com/mcp",
-      "transport": "sse",
-      "env_api_key": "STITCH_API_KEY",
-      "tools": ["generate_screen_from_text", "get_screen", "list_screens", "get_project"]
-    },
-    "firecrawl": {
-      "command": "npx",
-      "args": ["-y", "@mendable/firecrawl-mcp-server"],
-      "env": {
-        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
-      }
-    },
-    "arxiv": {
-      "command": "uvx",
-      "args": ["arxiv-mcp-server"],
-      "env": {}
-    },
-    "openseo": {
-      "command": "npx",
-      "args": ["-y", "openseo-mcp-server"],
-      "env": {}
-    },
-    "sqlite": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sqlite", "--db-path", "state/seo_hub.db"],
-      "env": {}
-    },
-    "gmail": {
-      "command": "npx",
-      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
-      "env": {
-        "GOOGLE_CLIENT_ID": "${GMAIL_MCP_CLIENT_ID}",
-        "GOOGLE_CLIENT_SECRET": "${GMAIL_MCP_CLIENT_SECRET}"
-      }
-    }
-  },
-  "waf_compliance": {
-    "sec_01_zero_hardcoded_credentials": true,
-    "sec_02_parameterized_queries": true,
-    "sec_04_resource_locks": true,
-    "rel_01_timeout_ms": 5000,
-    "rel_03_max_retries": 3,
-    "rel_05_messaging_resilience": "PeekLock",
-    "rel_06_pool_isolation": true,
-    "ops_01_structured_telemetry": "json"
   }
 }

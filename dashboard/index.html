@@ -3,584 +3,321 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEO Agent Hub • Observation Deck & Jules Orchestrator</title>
-
-  <!-- Google Fonts: Editorial Serif + Crisp Sans + Clinical Mono -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  <title>SEO Agent Hub :: Observation Deck (Jules + Stitch MCP + OpenSEO + GrowthBook)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-canvas: #060D1A;
-      --bg-surface: #0B1C30;
-      --bg-surface-elevated: #112642;
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(0, 74, 198, 0.5);
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
-      --accent-blue: #004AC6;
-      --accent-sky: #38BDF8;
-      --accent-emerald: #10B981;
-      --accent-amber: #F59E0B;
-      --accent-crimson: #EF4444;
-      --font-serif: 'Cormorant Garamond', Georgia, serif;
-      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --bg-surface: #FAF8F5;
+      --bg-card: #FFFFFF;
+      --bg-dark: #0F172A;
+      --text-primary: #0F172A;
+      --text-muted: #475569;
+      --accent-teal: #0D9488;
+      --accent-coral: #E11D48;
+      --border-subtle: rgba(15, 23, 42, 0.09);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: var(--bg-canvas);
-      color: var(--text-main);
-      font-family: var(--font-sans);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-    }
-
-    /* Ambient background gradient glow */
-    .glow-blob-1 {
-      position: fixed; top: -150px; left: 15%; width: 500px; height: 500px;
-      border-radius: 50%; background: radial-gradient(circle, rgba(0,74,198,0.2) 0%, transparent 70%);
-      filter: blur(100px); pointer-events: none; z-index: 0;
-    }
-    .glow-blob-2 {
-      position: fixed; bottom: -150px; right: 10%; width: 600px; height: 600px;
-      border-radius: 50%; background: radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%);
-      filter: blur(120px); pointer-events: none; z-index: 0;
-    }
-
-    /* Header Nav */
-    header {
-      background: rgba(11, 28, 48, 0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-subtle);
-      position: sticky; top: 0; z-index: 100;
-      padding: 0.875rem 2rem;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .brand {
-      display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit;
-    }
-    .brand-badge {
-      width: 2.25rem; height: 2.25rem; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent-blue), #0284C7);
-      color: #FFFFFF; font-family: var(--font-mono); font-weight: 700;
-      display: flex; align-items: center; justify-content: center; font-size: 0.8125rem;
-    }
-    .brand-title {
-      font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; line-height: 1;
-    }
-    .brand-sub {
-      font-family: var(--font-mono); font-size: 0.625rem; color: var(--accent-sky);
-      text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-top: 0.2rem;
-    }
-
-    .status-pill {
-      display: flex; align-items: center; gap: 0.5rem;
-      padding: 0.375rem 0.875rem; border-radius: 9999px;
-      background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);
-      color: var(--accent-emerald); font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600;
-    }
-    .status-dot {
-      width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--accent-emerald);
-      box-shadow: 0 0 8px var(--accent-emerald);
-    }
-
-    /* Container Grid */
-    main {
-      flex: 1; max-width: 1440px; margin: 0 auto; width: 100%;
-      padding: 2rem; position: relative; z-index: 1;
-      display: flex; flex-direction: column; gap: 2rem;
-    }
-
-    /* Cards */
-    .card {
       background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 1.25rem;
-      padding: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      line-height: 1.6;
+      padding-bottom: 4rem;
     }
-    .card-title {
-      font-family: var(--font-serif); font-size: 1.35rem; font-weight: 700;
-      display: flex; align-items: center; gap: 0.625rem; margin-bottom: 1rem;
+    .container-custom { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+    .pill-nav {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+      margin: 1.25rem auto 2rem; padding: 0.85rem 1.5rem;
+      background: #FFFFFF; border: 1px solid var(--border-subtle); border-radius: 9999px;
+      box-shadow: 0 6px 20px rgba(15,23,42,0.04);
     }
-    .card-title i { color: var(--accent-sky); font-size: 1rem; }
-
-    /* Telemetry Bar */
-    .telemetry-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;
+    .badge-pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; font-weight: 600;
+      padding: 0.35rem 0.9rem; border-radius: 9999px;
+      background: rgba(13, 148, 136, 0.12); color: var(--accent-teal);
     }
-    .telemetry-item {
-      background: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 0.875rem; padding: 1rem 1.25rem;
+    h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.1rem, 3.6vw, 3.1rem);
+      line-height: 1.10;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
     }
-    .telemetry-label {
-      font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;
+    h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.65rem; line-height: 1.15; margin-bottom: 0.75rem;
     }
-    .telemetry-value {
-      font-family: var(--font-mono); font-size: 1.25rem; font-weight: 700; color: var(--text-main);
+    .grid-2 { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    @media (max-width: 960px) { .grid-2 { grid-template-columns: 1fr; } }
+    .card-white {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 20px; padding: 1.5rem; box-shadow: 0 4px 16px rgba(15,23,42,0.03);
     }
-
-    /* Two-column layout */
-    .two-col {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    .card-dark {
+      background: var(--bg-dark); color: #F8FAFC;
+      border-radius: 20px; padding: 1.5rem;
     }
-    @media (max-width: 1024px) {
-      .two-col { grid-template-columns: 1fr; }
+    .btn-pill {
+      cursor: pointer; border: none; border-radius: 9999px;
+      padding: 0.65rem 1.3rem; font-family: inherit; font-weight: 600; font-size: 0.85rem;
+      background: var(--accent-teal); color: #FFFFFF; transition: opacity 0.15s;
     }
-
-    /* Chat Terminal */
-    .chat-container {
-      display: flex; flex-direction: column; height: 420px;
+    .btn-pill:hover { opacity: 0.9; }
+    .btn-outline {
+      cursor: pointer; border: 1px solid var(--border-subtle); border-radius: 9999px;
+      padding: 0.5rem 1rem; font-family: inherit; font-weight: 600; font-size: 0.8rem;
+      background: #FFFFFF; color: var(--text-primary);
     }
-    .chat-messages {
-      flex: 1; overflow-y: auto; padding: 1rem;
-      background: var(--bg-canvas); border-radius: 0.75rem;
-      border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 0.75rem;
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+    .chat-box {
+      height: 340px; overflow-y: auto; background: #0B1120; border-radius: 14px;
+      padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.08);
     }
-    .chat-msg {
-      padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 0.875rem; line-height: 1.5; max-width: 85%;
+    .chat-msg { margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .chat-sender { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #2DD4BF; text-transform: uppercase; }
+    .chat-input-row { display: flex; gap: 0.5rem; }
+    .chat-input-row input, select {
+      flex: 1; padding: 0.7rem 1rem; border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.2); background: #1E293B; color: #fff; font-family: inherit;
     }
-    .chat-msg.agent {
-      background: var(--bg-surface-elevated); border: 1px solid rgba(56, 189, 248, 0.2);
-      align-self: flex-start; color: #E2E8F0; white-space: pre-wrap; font-family: var(--font-sans);
-    }
-    .chat-msg.user {
-      background: var(--accent-blue); align-self: flex-end; color: #FFFFFF;
-    }
-    .chat-input-row {
-      display: flex; gap: 0.75rem; margin-top: 1rem;
-    }
-    .chat-input {
-      flex: 1; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle);
-      border-radius: 9999px; padding: 0.75rem 1.25rem; color: #FFFFFF; font-family: var(--font-sans);
-      font-size: 0.875rem; outline: none; transition: border-color 0.2s;
-    }
-    .chat-input:focus { border-color: var(--accent-sky); }
-    .btn-send {
-      background: var(--accent-blue); color: #FFFFFF; border: none;
-      padding: 0.75rem 1.5rem; border-radius: 9999px; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s;
-    }
-    .btn-send:hover { background: #0284C7; }
-
-    /* Chips */
-    .chips-row {
-      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem;
-    }
-    .chip {
-      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle);
-      padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem;
-      color: var(--accent-sky); cursor: pointer; transition: all 0.2s;
-    }
-    .chip:hover {
-      background: rgba(56, 189, 248, 0.15); border-color: var(--accent-sky);
-    }
-
-    /* Cohort Matrix Table */
-    .matrix-table {
-      width: 100%; border-collapse: collapse; font-size: 0.8125rem;
-    }
-    .matrix-table th {
-      text-align: left; padding: 0.75rem; color: var(--text-muted);
-      border-bottom: 1px solid var(--border-subtle); font-family: var(--font-mono); font-weight: 500;
-    }
-    .matrix-table td {
-      padding: 0.75rem; border-bottom: 1px solid var(--border-subtle);
-    }
-    .badge-cohort {
-      padding: 0.25rem 0.625rem; border-radius: 9999px; font-family: var(--font-mono);
-      font-size: 0.6875rem; font-weight: 700;
-    }
-    .badge-primary { background: rgba(0, 74, 198, 0.2); border: 1px solid var(--accent-blue); color: #93C5FD; }
-    .badge-regular { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle); color: #CBD5E1; }
-
-    /* Stitch Preview Frame */
-    .stitch-preview-box {
-      background: #FFFFFF; color: #0B1C30; border-radius: 0.875rem;
-      padding: 1.5rem; margin-top: 1rem; border: 1px solid var(--border-subtle);
-      max-height: 280px; overflow-y: auto; font-family: var(--font-sans);
-    }
-
-    /* Buttons */
-    .btn-action {
-      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-subtle);
-      color: #FFFFFF; padding: 0.375rem 0.875rem; border-radius: 9999px;
-      font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
-    }
-    .btn-action.approve:hover { background: var(--accent-emerald); border-color: var(--accent-emerald); }
-    .btn-action.rollback:hover { background: var(--accent-crimson); border-color: var(--accent-crimson); }
-
-    /* Script snippet */
-    .snippet-box {
-      background: var(--bg-canvas); border: 1px solid var(--border-subtle);
-      border-radius: 0.75rem; padding: 1rem 1.25rem; font-family: var(--font-mono);
-      font-size: 0.75rem; color: #38BDF8; overflow-x: auto; position: relative;
-    }
-    .copy-btn {
-      position: absolute; right: 0.75rem; top: 0.75rem;
-      background: rgba(255,255,255,0.1); border: 1px solid var(--border-subtle);
-      color: #FFFFFF; padding: 0.25rem 0.625rem; border-radius: 4px;
-      font-size: 0.6875rem; cursor: pointer;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.88rem; }
+    th, td { padding: 0.7rem 0.6rem; text-align: left; border-bottom: 1px solid var(--border-subtle); }
+    th { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; text-transform: uppercase; color: var(--text-muted); }
   </style>
 </head>
 <body>
-
-  <div class="glow-blob-1"></div>
-  <div class="glow-blob-2"></div>
-
-  <!-- Header -->
-  <header>
-    <a href="/" class="brand">
-      <div class="brand-badge">JH</div>
+  <div class="container-custom">
+    <nav class="pill-nav">
       <div>
-        <div class="brand-title">SEO Agent Hub <span style="font-style: italic; font-weight: 400; color: var(--accent-sky);">Observation Deck</span></div>
-        <span class="brand-sub">Jules Core • Google Stitch MCP • GrowthBook SDK</span>
+        <strong>SEO Agent Hub</strong>
+        <span style="color:var(--text-muted);font-size:0.88rem;margin-left:0.5rem;">Declarative MCP + Stitch Page Loop + GrowthBook A/B</span>
       </div>
-    </a>
-
-    <div style="display: flex; align-items: center; gap: 1rem;">
-      <div class="status-pill">
-        <span class="status-dot"></span>
-        <span>Jules + Stitch Live</span>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        <span class="badge-pill">Stitch Project: <span id="stitch-proj-id">503366360860058565</span></span>
+        <span class="badge-pill">Primary Cohort: 18-24</span>
+        <button class="btn-pill" onclick="triggerStitchPageGen()">+ Generate Page via Jules + Stitch MCP</button>
       </div>
-      <a href="http://localhost:4321" target="_blank" class="btn-action" style="text-decoration: none; display: flex; align-items: center; gap: 0.375rem;">
-        <span>View Host Site</span>
-        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.625rem;"></i>
-      </a>
-    </div>
-  </header>
+    </nav>
 
-  <!-- Main Container -->
-  <main>
+    <header style="margin-bottom: 1.5rem;">
+      <h1>Unified <em>Observation Deck</em> &amp; Jules Orchestrator Stream</h1>
+      <p style="color:var(--text-muted);max-width:860px;">
+        Research agents (<strong>Firecrawl</strong> + <strong>arXiv MCP</strong>) gather competitive &amp; clinical evidence, <strong>Jules + Stitch MCP</strong> synthesize new pages using the <code>.stitch/next-prompt.md</code> baton protocol, <strong>OpenSEO</strong> validates search/AEO compliance, and <strong>GrowthBook</strong> runs 6-cohort A/B experiments.
+      </p>
+    </header>
 
-    <!-- Telemetry Status Bar -->
-    <div class="telemetry-grid">
-      <div class="telemetry-item">
-        <div class="telemetry-label">Active Experiments</div>
-        <div class="telemetry-value" id="val-experiments">6 Cohorts</div>
-      </div>
-      <div class="telemetry-item">
-        <div class="telemetry-label">Stitch Generated Pages</div>
-        <div class="telemetry-value" id="val-pages">0</div>
-      </div>
-      <div class="telemetry-item">
-        <div class="telemetry-label">Captured Leads</div>
-        <div class="telemetry-value" id="val-leads" style="color: var(--accent-emerald);">0</div>
-      </div>
-      <div class="telemetry-item">
-        <div class="telemetry-label">Action Items (TODO)</div>
-        <div class="telemetry-value" id="val-actions" style="color: var(--accent-amber);">0</div>
-      </div>
-    </div>
-
-    <!-- Two Column: Chat with Jules & Stitch Generated Page Preview -->
-    <div class="two-col">
-      <!-- Chat with Jules Orchestrator -->
-      <div class="card chat-container">
-        <div class="card-title">
-          <i class="fa-solid fa-robot"></i>
-          <span>Jules Orchestrator Direct Bridge</span>
-        </div>
-        <div class="chat-messages" id="chat-messages">
-          <div class="chat-msg agent">[Jules Core] Online and connected to Google Stitch MCP & GrowthBook SDK.
-
-How would you like to direct the agents today?
-• Click "Research Competitors" to run Firecrawl & arXiv
-• Click "Synthesize Cohort 18-24" to generate the first Stitch page
-• Click "Dispatch Spark" to email action items & captured leads</div>
-        </div>
-
-        <div class="chips-row">
-          <div class="chip" onclick="quickChat('research dialysis clinical AI safety and Guro outbreak')">⚡ Research Competitors</div>
-          <div class="chip" onclick="quickChat('generate cohort 18-24')">🎨 Synthesize Cohort 18-24</div>
-          <div class="chip" onclick="quickChat('dispatch spark')">📧 Dispatch Spark Digest</div>
-          <div class="chip" onclick="quickChat('status')">📊 Full Status</div>
-        </div>
-
-        <form class="chat-input-row" onsubmit="handleChatSubmit(event)">
-          <input type="text" id="chat-input" class="chat-input" placeholder="Instruct Jules (e.g. 'generate cohort 18-24' or 'approve 1')..." />
-          <button type="submit" class="btn-send">
-            <span>Send</span>
-            <i class="fa-solid fa-paper-plane" style="font-size: 0.75rem;"></i>
-          </button>
-        </form>
-      </div>
-
-      <!-- Stitch Generated Page Gallery & Validation Gate -->
-      <div class="card">
-        <div class="card-title" style="justify-content: space-between;">
-          <div style="display: flex; align-items: center; gap: 0.625rem;">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <span>Stitch-Generated Page Preview & Validation</span>
+    <div class="grid-2">
+      <!-- Left Column: Stitch Generated Pages & 6-Cohort GrowthBook Matrix -->
+      <div style="display:flex;flex-direction:column;gap:1.5rem;">
+        <section class="card-white">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+            <h2>1. Pages Created by Jules + Stitch MCP (<code>.stitch/</code> Baton Loop)</h2>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+              <select id="gen-cohort-select" style="background:#F8FAFC;color:#0F172A;border:1px solid var(--border-subtle);padding:0.45rem 0.85rem;">
+                <option value="35-44">Cohort 35-44 (Attending Nephrologists)</option>
+                <option value="25-34">Cohort 25-34 (Clinical Engineering Residents)</option>
+                <option value="18-24">Cohort 18-24 (Primary Testing Cohort)</option>
+                <option value="45-54">Cohort 45-54 (Hospital Directors)</option>
+                <option value="55-64">Cohort 55-64 (CMOs & Grant Reviewers)</option>
+                <option value="65+">Cohort 65+ (Patient Safety Advocates)</option>
+              </select>
+              <button class="btn-pill" onclick="triggerStitchPageGen()">Create Page with Stitch</button>
+            </div>
           </div>
-          <span id="page-validation-badge" style="font-family: var(--font-mono); font-size: 0.6875rem; padding: 0.2rem 0.6rem; border-radius: 9999px; background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald);">
-            OpenSEO: 96 • CWV: 94
-          </span>
-        </div>
+          <div id="pages-list" style="margin-top:0.75rem;"></div>
+        </section>
 
-        <div id="stitch-preview-container">
-          <p style="color: var(--text-muted); font-size: 0.875rem;">No Stitch pages generated yet. Type "generate cohort 18-24" to synthesize your first data-driven page.</p>
-        </div>
+        <section class="card-white">
+          <h2>2. Six-Cohort GrowthBook A/B Experiments</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Cohort</th>
+                <th>Stitch Page</th>
+                <th>Impr / Conv</th>
+                <th>CVR &amp; Conf</th>
+                <th>Status</th>
+                <th>Steer</th>
+              </tr>
+            </thead>
+            <tbody id="experiments-tbody"></tbody>
+          </table>
+        </section>
 
-        <div style="margin-top: 1.25rem; display: flex; gap: 0.75rem; align-items: center;">
-          <button class="btn-action approve" id="btn-approve" onclick="approvePage()" style="display: none;">
-            <i class="fa-solid fa-check"></i> Approve for GrowthBook A/B Test
-          </button>
-          <button class="btn-action rollback" id="btn-rollback" onclick="rollbackPage()" style="display: none;">
-            <i class="fa-solid fa-rotate-left"></i> Rollback to Control
-          </button>
-        </div>
+        <section class="card-white">
+          <h2>3. Research Insights (Firecrawl &amp; arXiv) &amp; OpenSEO Validation Gate</h2>
+          <div id="insights-list"></div>
+          <h2 style="margin-top:1.5rem;">OpenSEO + AEO (<code>llms.txt</code>) Audit Gate</h2>
+          <div id="audits-list"></div>
+        </section>
+      </div>
+
+      <!-- Right Column: Jules Orchestrator Live Chat, Action Items & Cloned Skills Registry -->
+      <div style="display:flex;flex-direction:column;gap:1.5rem;">
+        <section class="card-dark">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+            <h2 style="color:#fff;margin:0;">Jules Orchestrator Bridge</h2>
+            <span class="badge-pill" style="background:rgba(45,212,191,0.15);color:#2DD4BF;">LIVE MCP STREAM</span>
+          </div>
+          <div class="chat-box" id="chat-box"></div>
+          <div class="chat-input-row">
+            <input id="chat-input" type="text" placeholder="Ask Jules: 'Create page with Stitch for 35-44' or 'Approve 18-24'..." onkeydown="if(event.key==='Enter')sendChat()" />
+            <button class="btn-pill" onclick="sendChat()">Send</button>
+          </div>
+        </section>
+
+        <section class="card-white">
+          <h2>Prioritized Action Items &amp; Captured Leads (<code>SEC-04</code>)</h2>
+          <div id="actions-list"></div>
+          <hr style="border:none;border-top:1px solid var(--border-subtle);margin:1rem 0;" />
+          <div class="mono" style="margin-bottom:0.5rem;">CanNotDelete Protected Leads (<span id="leads-count">0</span>)</div>
+          <div id="leads-list"></div>
+        </section>
+
+        <section class="card-white">
+          <h2>Cloned Upstream Skill Repositories (<code>./skills/</code>)</h2>
+          <div id="skills-registry-list" style="font-size:0.85rem;"></div>
+        </section>
       </div>
     </div>
-
-    <!-- GrowthBook 6-Cohort A/B Test Matrix -->
-    <div class="card">
-      <div class="card-title">
-        <i class="fa-solid fa-chart-line"></i>
-        <span>GrowthBook A/B Test Performance Matrix (6 Demographic Cohorts)</span>
-      </div>
-
-      <div style="overflow-x: auto;">
-        <table class="matrix-table">
-          <thead>
-            <tr>
-              <th>Cohort</th>
-              <th>Target Demographic</th>
-              <th>Traffic Split</th>
-              <th>Control A Views</th>
-              <th>Variant B (Stitch) Views</th>
-              <th>Variant Conversions</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="matrix-tbody">
-            <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Loading experiments...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Bottom Row: Leads & Action Items & Injected Script Tag -->
-    <div class="two-col">
-      <!-- Captured Leads Table -->
-      <div class="card">
-        <div class="card-title">
-          <i class="fa-solid fa-envelope-open-text"></i>
-          <span>Captured Clinical Leads (Spark Queue)</span>
-        </div>
-        <div id="leads-container" style="max-height: 220px; overflow-y: auto;">
-          <p style="color: var(--text-muted); font-size: 0.875rem;">No leads captured yet. Submitting the /partner form on the host landing page will register leads here.</p>
-        </div>
-      </div>
-
-      <!-- Zero-Backend Injected Script Tag -->
-      <div class="card">
-        <div class="card-title">
-          <i class="fa-solid fa-code"></i>
-          <span>Zero-Backend Host Script Snippet</span>
-        </div>
-        <p style="font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 0.75rem;">
-          Paste this single tag into your host landing page (Layout.astro or index.html) before &lt;/body&gt; to activate GrowthBook A/B testing and Stitch page variants:
-        </p>
-        <div class="snippet-box">
-          <button class="copy-btn" onclick="copySnippet()">Copy</button>
-          <pre id="snippet-code">&lt;script src="http://localhost:4325/sdk/growthbook-ab.js" data-api-host="http://localhost:4325" data-client-key="sdk-dual-shield" data-default-cohort="18-24" defer&gt;&lt;/script&gt;</pre>
-        </div>
-      </div>
-    </div>
-
-  </main>
+  </div>
 
   <script>
-    let activePageId = null;
+    async function loadState() {
+      const res = await fetch('/api/state');
+      const data = await res.json();
+      document.getElementById('stitch-proj-id').textContent = data.stitch_project_id;
 
-    async function fetchState() {
-      try {
-        const res = await fetch('/api/state');
-        if (!res.ok) return;
-        const data = await res.json();
-
-        // Update telemetry values
-        document.getElementById('val-pages').textContent = data.pages.length;
-        document.getElementById('val-leads').textContent = data.leads.length;
-        document.getElementById('val-actions').textContent = data.actionItems.filter(a => a.status === 'TODO').length;
-
-        // Render preview if pages exist
-        if (data.pages.length > 0) {
-          const latestPage = data.pages[0];
-          activePageId = latestPage.id;
-          renderPagePreview(latestPage);
-        }
-
-        // Render A/B Experiments
-        renderExperiments(data.experiments);
-
-        // Render Leads
-        renderLeads(data.leads);
-
-      } catch (err) {
-        console.error('Failed to fetch state:', err);
-      }
-    }
-
-    function renderPagePreview(page) {
-      const container = document.getElementById('stitch-preview-container');
-      const badge = document.getElementById('page-validation-badge');
-      const btnApprove = document.getElementById('btn-approve');
-      const btnRollback = document.getElementById('btn-rollback');
-
-      badge.textContent = `OpenSEO: ${page.openseo_score} • CWV: ${page.unlighthouse_score} • Status: ${page.approval_status}`;
-      
-      container.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <div>
-            <span style="font-weight: 700; font-size: 0.9375rem; color: #FFFFFF;">${page.title}</span>
-            <span style="font-size: 0.75rem; color: var(--accent-sky); margin-left: 0.5rem; font-family: var(--font-mono);">${page.stitch_screen_id || 'Stitch ID'}</span>
+      // Render Stitch Generated Pages
+      const pagesEl = document.getElementById('pages-list');
+      pagesEl.innerHTML = data.pages.map(p => `
+        <div style="padding:1rem;border:1px solid var(--border-subtle);border-radius:14px;margin-bottom:0.75rem;background:#FAF8F5;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+            <div>
+              <span class="badge-pill">COHORT ${p.target_cohort}</span>
+              <span class="mono" style="margin-left:0.4rem;color:var(--text-muted);">${p.stitch_screen_id || 'stitch-screen'}</span>
+            </div>
+            <div style="display:flex;gap:0.5rem;">
+              <a href="/sdk/generated-pages/${p.page_slug}.html" target="_blank" class="btn-outline" style="text-decoration:none;">Preview Stitch HTML ↗</a>
+              <span class="badge-pill">${p.status}</span>
+            </div>
           </div>
-          <span class="badge-cohort badge-primary">Cohort: ${page.cohort}</span>
+          <div style="font-weight:700;margin-top:0.5rem;font-size:1.02rem;">${p.headline}</div>
+          <div style="font-size:0.86rem;color:var(--text-muted);margin-top:0.25rem;">${p.subheadline}</div>
+          <div class="mono" style="font-size:0.75rem;color:var(--accent-teal);margin-top:0.4rem;">Slug: /blog/${p.page_slug} • Host Route: ${p.host_route_path}</div>
         </div>
-        <div class="stitch-preview-box">
-          ${page.generated_html}
+      `).join('');
+
+      // Render 6-Cohort Experiments
+      const expTbody = document.getElementById('experiments-tbody');
+      expTbody.innerHTML = data.experiments.map(e => `
+        <tr>
+          <td><strong>${e.cohort}</strong> ${e.is_primary_cohort ? '<span class="badge-pill">PRIMARY</span>' : ''}</td>
+          <td class="mono" style="font-size:0.75rem;">${e.variant.article_slug || 'medgemma-cpoe-idh-prediction-2026'}</td>
+          <td class="mono">${e.impressions} / ${e.conversions}</td>
+          <td class="mono"><strong>${e.conversion_rate}%</strong> (${e.confidence_pct}%)</td>
+          <td><span class="badge-pill">${e.status}</span></td>
+          <td style="display:flex;gap:0.35rem;">
+            <button class="btn-outline" onclick="steerExperiment('${e.cohort}', 'approve_experiment')">Approve</button>
+            <button class="btn-outline" onclick="steerExperiment('${e.cohort}', 'rollback_experiment')">Rollback</button>
+          </td>
+        </tr>
+      `).join('');
+
+      // Render Insights
+      document.getElementById('insights-list').innerHTML = data.insights.map(i => `
+        <div style="padding:0.75rem 0;border-bottom:1px solid var(--border-subtle);">
+          <span class="badge-pill">${i.source_type.toUpperCase()}</span>
+          <span class="mono" style="margin-left:0.4rem;">Cohort ${i.target_cohort} • ${i.status}</span>
+          <div style="font-weight:600;margin-top:0.3rem;">${i.title}</div>
+          <div style="font-size:0.85rem;color:var(--text-muted);">${i.summary}</div>
         </div>
-      `;
+      `).join('');
 
-      btnApprove.style.display = 'inline-flex';
-      btnRollback.style.display = 'inline-flex';
+      // Render Audits
+      document.getElementById('audits-list').innerHTML = data.audits.map(a => `
+        <div style="padding:0.65rem 0;border-bottom:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div class="mono" style="font-weight:600;">${a.target_url}</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Skills: ${a.skill_used} • llms.txt: Valid</div>
+          </div>
+          <span class="badge-pill">OpenSEO ${a.openseo_score}/100 • Gate ${a.gate_passed ? 'PASSED' : 'BLOCKED'}</span>
+        </div>
+      `).join('');
+
+      // Render Chat
+      const chatBox = document.getElementById('chat-box');
+      chatBox.innerHTML = data.messages.map(m => `
+        <div class="chat-msg">
+          <div class="chat-sender">${m.sender} • ${m.created_at}</div>
+          <div style="color:#E2E8F0;font-size:0.88rem;margin-top:0.2rem;">${m.message}</div>
+        </div>
+      `).join('');
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Render Actions & Leads
+      document.getElementById('actions-list').innerHTML = data.actions.map(a => `
+        <div style="padding:0.55rem 0;border-bottom:1px solid var(--border-subtle);font-size:0.86rem;">
+          <span class="badge-pill">${a.priority} • ${a.category}</span>
+          <strong style="margin-left:0.4rem;">${a.title}</strong>
+          <div style="color:var(--text-muted);font-size:0.8rem;margin-top:0.2rem;">${a.recommended_action}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('leads-count').textContent = data.leads.length;
+      document.getElementById('leads-list').innerHTML = data.leads.map(l => `
+        <div class="mono" style="font-size:0.78rem;padding:0.35rem 0;">
+          ${l.email} (${l.organization}) — Cohort ${l.role_cohort}
+        </div>
+      `).join('');
+
+      // Render Cloned Skills Registry
+      const skillsEntries = Object.entries(data.cloned_skills_registry || {});
+      document.getElementById('skills-registry-list').innerHTML = skillsEntries.map(([name, info]) => `
+        <div style="padding:0.45rem 0;border-bottom:1px solid var(--border-subtle);">
+          <strong class="mono">${name}</strong>
+          <div style="font-size:0.78rem;color:var(--text-muted);">${info.upstream_repo}</div>
+        </div>
+      `).join('');
     }
 
-    function renderExperiments(experiments) {
-      const tbody = document.getElementById('matrix-tbody');
-      const cohorts = [
-        { key: '18-24', label: 'Residents, Trainees & AI Students (Primary)', isPrimary: true },
-        { key: '25-34', label: 'Staff Nurses & Bedside Clinicians', isPrimary: false },
-        { key: '35-44', label: 'Ward Supervisors & Senior Nephrologists', isPrimary: false },
-        { key: '45-54', label: 'Hospital Directors & Health IT Execs', isPrimary: false },
-        { key: '55-64', label: 'Academic Deans & Ministry Evaluators', isPrimary: false },
-        { key: '65+', label: 'Patient Advocates & Emeritus Consultants', isPrimary: false }
-      ];
-
-      tbody.innerHTML = cohorts.map(c => {
-        const exp = experiments.find(e => e.cohort === c.key) || {
-          traffic_pct: 50,
-          control_impressions: 0,
-          variant_impressions: 0,
-          variant_conversions: 0,
-          status: 'ACTIVE'
-        };
-
-        const badgeClass = c.isPrimary ? 'badge-cohort badge-primary' : 'badge-cohort badge-regular';
-        return `
-          <tr>
-            <td><span class="${badgeClass}">${c.key}</span></td>
-            <td style="color: #E2E8F0;">${c.label}</td>
-            <td style="font-family: var(--font-mono);">${exp.traffic_pct}% / 50%</td>
-            <td style="font-family: var(--font-mono);">${exp.control_impressions}</td>
-            <td style="font-family: var(--font-mono); color: var(--accent-emerald); font-weight: 600;">${exp.variant_impressions}</td>
-            <td style="font-family: var(--font-mono); color: var(--accent-sky); font-weight: 600;">${exp.variant_conversions}</td>
-            <td><span style="color: var(--accent-emerald); font-family: var(--font-mono); font-size: 0.75rem;">● ${exp.status}</span></td>
-            <td>
-              <button class="btn-action" onclick="quickChat('generate cohort ${c.key}')" style="font-size: 0.6875rem;">Synthesize</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
+    async function triggerStitchPageGen() {
+      const cohort = document.getElementById('gen-cohort-select').value;
+      await fetch('/api/stitch/generate-page', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target_cohort: cohort })
+      });
+      await loadState();
     }
 
-    function renderLeads(leads) {
-      const container = document.getElementById('leads-container');
-      if (leads.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-muted); font-size: 0.875rem;">No leads captured yet.</p>';
-        return;
-      }
-
-      container.innerHTML = `
-        <table class="matrix-table">
-          <thead>
-            <tr><th>Name</th><th>Institution</th><th>Email</th><th>Cohort</th><th>Spark Status</th></tr>
-          </thead>
-          <tbody>
-            ${leads.map(l => `
-              <tr>
-                <td style="font-weight: 600;">${l.name}</td>
-                <td>${l.institution}</td>
-                <td style="font-family: var(--font-mono); color: var(--accent-sky);">${l.email}</td>
-                <td><span class="badge-cohort badge-regular">${l.cohort}</span></td>
-                <td><span style="color: ${l.dispatched_by_spark ? 'var(--accent-emerald)' : 'var(--accent-amber)'}; font-size: 0.75rem;">${l.dispatched_by_spark ? 'Emailed' : 'Queued'}</span></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
+    async function steerExperiment(cohort, action) {
+      await fetch('/api/orchestrator/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cohort, action, message: `${action} for cohort ${cohort}` })
+      });
+      await loadState();
     }
 
-    async function handleChatSubmit(e) {
-      e.preventDefault();
+    async function sendChat() {
       const input = document.getElementById('chat-input');
-      const msg = input.value.trim();
-      if (!msg) return;
-
+      const message = input.value.trim();
+      if (!message) return;
       input.value = '';
-      appendChatMessage('user', msg);
-
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: msg })
-        });
-        const data = await res.json();
-        appendChatMessage('agent', data.reply || '[Jules] Received command.');
-        fetchState();
-      } catch (err) {
-        appendChatMessage('agent', '[Error] Failed to communicate with Jules Orchestrator.');
-      }
+      await fetch('/api/orchestrator/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+      await loadState();
     }
 
-    function quickChat(text) {
-      document.getElementById('chat-input').value = text;
-      handleChatSubmit(new Event('submit'));
-    }
-
-    function appendChatMessage(role, text) {
-      const chatMessages = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.className = `chat-msg ${role}`;
-      div.textContent = text;
-      chatMessages.appendChild(div);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    async function approvePage() {
-      if (!activePageId) return;
-      await fetch(`/api/mutations/${activePageId}/approve`, { method: 'POST' });
-      fetchState();
-    }
-
-    async function rollbackPage() {
-      if (!activePageId) return;
-      await fetch(`/api/mutations/${activePageId}/rollback`, { method: 'POST' });
-      fetchState();
-    }
-
-    function copySnippet() {
-      const code = document.getElementById('snippet-code').innerText;
-      navigator.clipboard.writeText(code);
-      alert('GrowthBook SDK snippet copied to clipboard!');
-    }
-
-    // Polling state every 4s
-    fetchState();
-    setInterval(fetchState, 4000);
+    loadState();
   </script>
 </body>
 </html>

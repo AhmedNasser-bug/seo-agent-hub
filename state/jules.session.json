@@ -1,0 +1,8 @@
+{
+  "operator": "jules-core",
+  "auth_provider": "google_oauth",
+  "extension_path": "./skills/jules-extension",
+  "session_status": "authenticated",
+  "manifest_path": "/home/antigravity/AhmedNasser-bug/Grad_project_landing/seo-agent-hub/config/jules.manifest.json",
+  "updated_at": "2026-11-09T15:55:44Z"
+}

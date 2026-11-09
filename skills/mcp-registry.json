@@ -1,76 +1,121 @@
 {
-  "$schema": "https://json.schemastore.org/mcp-registry.json",
-  "version": "1.0.0",
-  "registry": [
-    {
-      "name": "stitch-mcp",
-      "layer": "DOM & Page Generation",
-      "provider": "google",
-      "transport": "sse",
-      "endpoint": "https://stitch.googleapis.com/mcp",
-      "primary_operator": "jules",
-      "tools": [
-        "generate_screen_from_text",
-        "get_screen",
-        "list_screens",
-        "get_project"
+  "$schema": "https://modelcontextprotocol.io/schemas/2026-01/mcp-registry.json",
+  "version": "1.2.0",
+  "note": "All skills and MCP servers in this directory are cloned directly from their official open-source GitHub repositories rather than custom rewrites.",
+  "cloned_repositories": {
+    "open-seo": {
+      "upstream_repo": "https://github.com/every-app/open-seo.git",
+      "local_path": "./skills/open-seo",
+      "skills": [
+        "./skills/open-seo/.agents/skills/seo-audit/SKILL.md",
+        "./skills/open-seo/.agents/skills/seo-coach/SKILL.md",
+        "./skills/open-seo/.agents/skills/seo-report/SKILL.md",
+        "./skills/open-seo/.agents/skills/keyword-research/SKILL.md",
+        "./skills/open-seo/.agents/skills/competitor-analysis/SKILL.md",
+        "./skills/open-seo/.agents/skills/setup-openseo/SKILL.md"
       ],
-      "env_keys": ["STITCH_API_KEY"]
+      "assigned_agents": ["validation", "research"]
     },
-    {
-      "name": "firecrawl-mcp",
-      "layer": "Web Reconnaissance",
-      "provider": "mendable",
-      "transport": "stdio",
+    "open-seo-mcp-skills": {
+      "upstream_repo": "https://github.com/Ryze-AI-Adgent/open-seo-mcp-skills.git",
+      "local_path": "./skills/open-seo-mcp-skills",
+      "skills": [
+        "./skills/open-seo-mcp-skills/SKILL.md"
+      ],
+      "assigned_agents": ["validation", "research"]
+    },
+    "claude-seo": {
+      "upstream_repo": "https://github.com/AgriciDaniel/claude-seo.git",
+      "local_path": "./skills/claude-seo",
+      "skills": [
+        "./skills/claude-seo/skills/seo/SKILL.md",
+        "./skills/claude-seo/skills/seo-audit/SKILL.md",
+        "./skills/claude-seo/skills/seo-page/SKILL.md",
+        "./skills/claude-seo/skills/seo-technical/SKILL.md",
+        "./skills/claude-seo/skills/seo-schema/SKILL.md",
+        "./skills/claude-seo/skills/seo-geo/SKILL.md"
+      ],
+      "assigned_agents": ["validation"]
+    },
+    "agentic-seo-skill": {
+      "upstream_repo": "https://github.com/Bhanunamikaze/Agentic-SEO-Skill.git",
+      "local_path": "./skills/agentic-seo-skill",
+      "skills": [
+        "./skills/agentic-seo-skill/SKILL.md"
+      ],
+      "assigned_agents": ["validation", "research"]
+    },
+    "firecrawl-skills": {
+      "upstream_repo": "https://github.com/firecrawl/skills.git",
+      "local_path": "./skills/firecrawl-skills",
+      "skills": [
+        "./skills/firecrawl-skills/skills/firecrawl-scrape/SKILL.md",
+        "./skills/firecrawl-skills/skills/firecrawl-crawl/SKILL.md",
+        "./skills/firecrawl-skills/skills/firecrawl-search/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-competitive-intel/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-lead-gen/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-research-papers/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-seo-audit/SKILL.md"
+      ],
+      "assigned_agents": ["research", "validation"]
+    },
+    "firecrawl-mcp-server": {
+      "upstream_repo": "https://github.com/firecrawl/firecrawl-mcp-server.git",
+      "local_path": "./skills/firecrawl-mcp-server",
       "command": "npx",
-      "args": ["-y", "@mendable/firecrawl-mcp-server"],
-      "primary_operator": "antigravity",
-      "tools": ["firecrawl_scrape", "firecrawl_crawl", "firecrawl_search"],
-      "env_keys": ["FIRECRAWL_API_KEY"]
+      "args": ["-y", "firecrawl-mcp"],
+      "env": ["FIRECRAWL_API_KEY"],
+      "assigned_agents": ["research"]
     },
-    {
-      "name": "arxiv-mcp",
-      "layer": "Academic Discovery",
-      "provider": "community",
-      "transport": "stdio",
-      "command": "uvx",
-      "args": ["arxiv-mcp-server"],
-      "primary_operator": "antigravity",
-      "tools": ["search_papers", "get_paper_abstract", "get_paper_pdf"],
-      "env_keys": []
+    "stitch-skills": {
+      "upstream_repo": "https://github.com/google-labs-code/stitch-skills.git",
+      "local_path": "./skills/stitch-skills",
+      "skills": [
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/stitch-loop/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/generate-design/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/design-md/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/enhance-prompt/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/site-md/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/extract-static-html/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/manage-design-system/SKILL.md"
+      ],
+      "assigned_agents": ["appearance", "orchestrator"]
     },
-    {
-      "name": "openseo-mcp",
-      "layer": "SEO & AEO Auditing",
-      "provider": "open-source",
-      "transport": "stdio",
+    "stitch-mcp": {
+      "upstream_repo": "https://github.com/davideast/stitch-mcp.git",
+      "local_path": "./skills/stitch-mcp",
       "command": "npx",
-      "args": ["-y", "openseo-mcp-server"],
-      "primary_operator": "validation",
-      "tools": ["audit_url", "generate_llms_txt", "validate_robots_txt"],
-      "env_keys": []
+      "args": ["@_davideast/stitch-mcp", "proxy"],
+      "cli_commands": {
+        "init": "npx @_davideast/stitch-mcp init",
+        "doctor": "npx @_davideast/stitch-mcp doctor",
+        "site": "npx @_davideast/stitch-mcp site -p 503366360860058565",
+        "tool": "npx @_davideast/stitch-mcp tool"
+      },
+      "env": ["STITCH_API_KEY", "STITCH_PROJECT_ID"],
+      "assigned_agents": ["appearance", "orchestrator"]
     },
-    {
-      "name": "sqlite-mcp",
-      "layer": "State Store",
-      "provider": "modelcontextprotocol",
-      "transport": "stdio",
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sqlite", "--db-path", "state/seo_hub.db"],
-      "primary_operator": "shared",
-      "tools": ["read_query", "write_query", "list_tables", "describe_table"],
-      "env_keys": []
+    "stitch-mcp-server": {
+      "upstream_repo": "https://github.com/Kargatharaakash/stitch-mcp.git",
+      "local_path": "./skills/stitch-mcp-server",
+      "command": "node",
+      "args": ["./skills/stitch-mcp-server/index.js"],
+      "assigned_agents": ["appearance"]
     },
-    {
-      "name": "gmail-mcp",
-      "layer": "Dispatch & Notification",
-      "provider": "google-workspace",
-      "transport": "stdio",
-      "command": "npx",
-      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
-      "primary_operator": "spark",
-      "tools": ["send_message", "create_draft", "list_threads"],
-      "env_keys": ["GMAIL_MCP_CLIENT_ID", "GMAIL_MCP_CLIENT_SECRET"]
+    "arxiv-mcp-server": {
+      "upstream_repo": "https://github.com/blazickjp/arxiv-mcp-server.git",
+      "local_path": "./skills/arxiv-mcp-server",
+      "command": "uv",
+      "args": ["tool", "run", "arxiv-mcp-server", "--storage-path", "./state/arxiv-papers"],
+      "assigned_agents": ["research"]
+    },
+    "jules-extension": {
+      "upstream_repo": "https://github.com/gemini-cli-extensions/jules.git",
+      "local_path": "./skills/jules-extension",
+      "command": "node",
+      "args": ["./skills/jules-extension/dist/index.js"],
+      "tools": ["start_new_jules_task"],
+      "assigned_agents": ["orchestrator", "appearance"]
     }
-  ]
+  }
 }
