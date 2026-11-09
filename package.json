@@ -1,0 +1,25 @@
+{
+  "name": "seo-agent-hub",
+  "version": "1.0.0",
+  "description": "Declarative Model Context Protocol & GrowthBook Agentic Stack for Data-Driven Page Generation, AEO & A/B Testing",
+  "type": "module",
+  "main": "dashboard/server.mjs",
+  "scripts": {
+    "init": "./init",
+    "dashboard": "node dashboard/server.mjs",
+    "test": "node --test tests/e2e.test.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "jules",
+    "google-stitch",
+    "growthbook",
+    "seo",
+    "aeo",
+    "ab-testing",
+    "firecrawl"
+  ],
+  "author": "Pharos University AI Engineering Team",
+  "license": "MIT"
+}

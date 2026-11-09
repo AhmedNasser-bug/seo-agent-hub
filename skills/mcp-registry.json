@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json.schemastore.org/mcp-registry.json",
+  "version": "1.0.0",
+  "registry": [
+    {
+      "name": "stitch-mcp",
+      "layer": "DOM & Page Generation",
+      "provider": "google",
+      "transport": "sse",
+      "endpoint": "https://stitch.googleapis.com/mcp",
+      "primary_operator": "jules",
+      "tools": [
+        "generate_screen_from_text",
+        "get_screen",
+        "list_screens",
+        "get_project"
+      ],
+      "env_keys": ["STITCH_API_KEY"]
+    },
+    {
+      "name": "firecrawl-mcp",
+      "layer": "Web Reconnaissance",
+      "provider": "mendable",
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@mendable/firecrawl-mcp-server"],
+      "primary_operator": "antigravity",
+      "tools": ["firecrawl_scrape", "firecrawl_crawl", "firecrawl_search"],
+      "env_keys": ["FIRECRAWL_API_KEY"]
+    },
+    {
+      "name": "arxiv-mcp",
+      "layer": "Academic Discovery",
+      "provider": "community",
+      "transport": "stdio",
+      "command": "uvx",
+      "args": ["arxiv-mcp-server"],
+      "primary_operator": "antigravity",
+      "tools": ["search_papers", "get_paper_abstract", "get_paper_pdf"],
+      "env_keys": []
+    },
+    {
+      "name": "openseo-mcp",
+      "layer": "SEO & AEO Auditing",
+      "provider": "open-source",
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "openseo-mcp-server"],
+      "primary_operator": "validation",
+      "tools": ["audit_url", "generate_llms_txt", "validate_robots_txt"],
+      "env_keys": []
+    },
+    {
+      "name": "sqlite-mcp",
+      "layer": "State Store",
+      "provider": "modelcontextprotocol",
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite", "--db-path", "state/seo_hub.db"],
+      "primary_operator": "shared",
+      "tools": ["read_query", "write_query", "list_tables", "describe_table"],
+      "env_keys": []
+    },
+    {
+      "name": "gmail-mcp",
+      "layer": "Dispatch & Notification",
+      "provider": "google-workspace",
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
+      "primary_operator": "spark",
+      "tools": ["send_message", "create_draft", "list_threads"],
+      "env_keys": ["GMAIL_MCP_CLIENT_ID", "GMAIL_MCP_CLIENT_SECRET"]
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json.schemastore.org/jules-manifest.json",
+  "version": "1.0.0",
+  "name": "seo-agent-hub",
+  "description": "Declarative Model Context Protocol & GrowthBook Agentic Stack for Data-Driven Page Generation, AEO & A/B Testing",
+  "orchestrator": {
+    "engine": "jules-core",
+    "prompt_file": "agents/orchestrator.md",
+    "timeout_ms": 5000,
+    "max_retries": 3,
+    "state_store": "sqlite:state/seo_hub.db"
+  },
+  "agents": {
+    "research": {
+      "name": "Research Agent",
+      "prompt_file": "agents/research.md",
+      "mcp_servers": ["firecrawl", "arxiv", "sqlite"],
+      "primary_operator": "antigravity_or_jules"
+    },
+    "appearance": {
+      "name": "Appearance & Page Generation Agent",
+      "prompt_file": "agents/appearance.md",
+      "mcp_servers": ["stitch", "sqlite"],
+      "primary_operator": "jules"
+    },
+    "validation": {
+      "name": "SEO & AEO Validation Gate",
+      "prompt_file": "agents/validation.md",
+      "mcp_servers": ["openseo", "sqlite"],
+      "thresholds": {
+        "min_openseo_score": 90,
+        "min_unlighthouse_score": 85
+      }
+    },
+    "spark": {
+      "name": "Communication & Daily Action Agent",
+      "prompt_file": "agents/spark.md",
+      "mcp_servers": ["gmail", "sqlite"],
+      "schedule": "0 8 * * *"
+    }
+  },
+  "mcp_servers": {
+    "stitch": {
+      "endpoint": "https://stitch.googleapis.com/mcp",
+      "transport": "sse",
+      "env_api_key": "STITCH_API_KEY",
+      "tools": ["generate_screen_from_text", "get_screen", "list_screens", "get_project"]
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "@mendable/firecrawl-mcp-server"],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      }
+    },
+    "arxiv": {
+      "command": "uvx",
+      "args": ["arxiv-mcp-server"],
+      "env": {}
+    },
+    "openseo": {
+      "command": "npx",
+      "args": ["-y", "openseo-mcp-server"],
+      "env": {}
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite", "--db-path", "state/seo_hub.db"],
+      "env": {}
+    },
+    "gmail": {
+      "command": "npx",
+      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
+      "env": {
+        "GOOGLE_CLIENT_ID": "${GMAIL_MCP_CLIENT_ID}",
+        "GOOGLE_CLIENT_SECRET": "${GMAIL_MCP_CLIENT_SECRET}"
+      }
+    }
+  },
+  "waf_compliance": {
+    "sec_01_zero_hardcoded_credentials": true,
+    "sec_02_parameterized_queries": true,
+    "sec_04_resource_locks": true,
+    "rel_01_timeout_ms": 5000,
+    "rel_03_max_retries": 3,
+    "rel_05_messaging_resilience": "PeekLock",
+    "rel_06_pool_isolation": true,
+    "ops_01_structured_telemetry": "json"
+  }
+}

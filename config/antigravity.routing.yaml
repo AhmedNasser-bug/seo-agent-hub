@@ -1,0 +1,54 @@
+# ==============================================================================
+# Declarative Routing Configuration for Antigravity vs. Jules Fallback
+# ==============================================================================
+
+version: "1.0.0"
+routing_strategy: "prefer_antigravity_with_jules_fallback"
+
+operators:
+  antigravity:
+    detection_command: "command -v antigravity || command -v agy-plugin-proxy"
+    capabilities:
+      - "multi_agent_orchestration"
+      - "browser_control"
+      - "deep_codebase_research"
+      - "file_system_sandbox"
+
+  jules:
+    detection_command: "command -v jules || test -f config/.session/jules_oauth.json"
+    capabilities:
+      - "async_cloud_execution"
+      - "mcp_tool_invocation"
+      - "stitch_mcp_page_synthesis"
+      - "pull_request_dispatch"
+
+task_bindings:
+  web_reconnaissance:
+    primary: "antigravity"
+    fallback: "jules"
+    mcp_tool: "firecrawl"
+    description: "Scan competitor pages, extracting H1-H3 structures, keyword density, and value propositions."
+
+  academic_discovery:
+    primary: "antigravity"
+    fallback: "jules"
+    mcp_tool: "arxiv"
+    description: "Search arXiv and PubMed for clinical AI safety, dialysis water treatment, and AEO trends."
+
+  page_generation:
+    primary: "jules"
+    fallback: "antigravity"
+    mcp_tool: "stitch"
+    description: "Invoke Google Stitch MCP to generate HTML/CSS page variants and blog articles."
+
+  seo_validation:
+    primary: "jules"
+    fallback: "antigravity"
+    mcp_tool: "openseo"
+    description: "Audit Stitch-generated pages for SEO, speed, and AEO compliance (llms.txt)."
+
+  daily_communication:
+    primary: "jules"
+    fallback: "antigravity"
+    mcp_tool: "gmail"
+    description: "Dispatch morning action items and lead lists via Spark."

@@ -1,0 +1,12 @@
+[project]
+name = "SEO Agent Hub Observation Deck"
+description = "Declarative Jules Core Orchestrator & Google Stitch MCP Console"
+
+[UI]
+name = "Observation Deck"
+default_theme = "dark"
+hide_cot = false
+
+[features]
+prompt_playground = false
+spontaneous_file_upload = false

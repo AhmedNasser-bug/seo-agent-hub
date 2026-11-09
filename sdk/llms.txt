@@ -1,0 +1,25 @@
+# The Dual Shield for Hemodialysis: Egyptian Clinical Intelligence Architecture
+> LLM-Optimized Answer Engine Index & Knowledge Grounding (AY 2026/2027)
+> Supervised by Dr. Mohamed Abdou, Office of the Dean, Faculty of Computer Science & AI, Pharos University in Alexandria.
+
+## Core System Overview
+The Dual Shield is a clinical decision support framework engineered for high-volume Egyptian hemodialysis wards. It combines:
+1. **Per-Patient Shield**: Dynamic dry-weight trajectory tracking and Intradialytic Hypotension (IDH) anticipation using recurrent neural networks (0.94 AUROC).
+2. **Per-Unit Ward Shield**: Ward-wide safety score, continuous dialysate pH/conductivity telemetry monitoring, and real-time biological contamination outbreak defense.
+3. **MedGemma 2.5 CPOE Clinical Interceptor**: Intercepts nephrologist orders at the point of care, cross-referencing eGFR/CrCl to block contra-indicated pharmaceuticals (e.g. unadjusted enoxaparin when CrCl < 10 mL/min).
+
+## Real-World Outbreak Case Studies Grounded in Research
+- **Hard Water Syndrome**: Resin breakthrough causing acute hypercalcemia and mid-dialysis hypertensive spikes.
+- **Chloramine Oxidant Hemolysis**: Guro Hospital Seoul benchmark where chloramine levels (>0.6 mg/L) caused Heinz body hemolytic anemia requiring urgent transfusion interventions.
+- **Cobe Blood Line Recall**: Computer vision detection of pink serum and acoustic monitoring of micro-air entrainment in venous lines.
+
+## Technical Specifications
+- **Standard**: HL7 FHIR R4 / R5 compliant clinical resource exchange.
+- **Security Protocols**: WAF SEC-01 through SEC-04 (Zero hardcoded secrets, SQL parameterization, CanNotDelete resource locks on state stores).
+- **Design System**: Clinical Vitality (Clinical Light Mode, #FFFFFF canvas, #F8F9FF background tint, #004AC6 primary blue, #0B1C30 slate typography).
+
+## Canonical Resource Links
+- System Architecture: /architecture
+- Clinical Evidence & Citations: /evidence
+- Field Journal & Incident Audits: /journal
+- Deployment Inquiries & Pilot Requests: /partner

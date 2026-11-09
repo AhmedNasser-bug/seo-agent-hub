@@ -1,0 +1,70 @@
+{
+  "name": "google-stitch-mcp",
+  "version": "2026.1.0",
+  "server_url": "https://stitch.googleapis.com/mcp",
+  "project_id": "projects/503366360860058565",
+  "design_system": {
+    "name": "Clinical Vitality",
+    "theme": "Clinical Light Mode",
+    "tokens": {
+      "surface": "#FFFFFF",
+      "background_tint": "#F8F9FF",
+      "primary": "#004AC6",
+      "slate_dark": "#0B1C30",
+      "success_medical": "#10B981",
+      "critical_alert": "#EF4444"
+    },
+    "typography": {
+      "editorial_serif": "Cormorant Garamond",
+      "crisp_sans": "Plus Jakarta Sans",
+      "clinical_mono": "JetBrains Mono"
+    }
+  },
+  "cohort_profiles": {
+    "18-24": {
+      "label": "Trainees, Residents & Students (Primary Testing Cohort)",
+      "tone": "Academic, AI-forward, Evidence-rich, Interactive simulation focus",
+      "primary_call_to_action": "Explore AI Decision Support Simulation",
+      "key_differentiators": ["MedGemma 2.5 real-time CPOE", "Guro outbreak case study", "Open evidence ledger"]
+    },
+    "25-34": {
+      "label": "Staff Nurses & Junior Nephrologists",
+      "tone": "Workflow optimization, error reduction, bedside usability",
+      "primary_call_to_action": "View Bedside Workflow Integration",
+      "key_differentiators": ["Bed queue biometric matching", "Dialysate conductivity telemetry"]
+    },
+    "35-44": {
+      "label": "Unit Supervisors & Senior Clinicians",
+      "tone": "Ward safety score, regulatory compliance, protocol adherence",
+      "primary_call_to_action": "Request Unit Architecture Spec",
+      "key_differentiators": ["Dual Shield ward-wide safety index", "HL7 FHIR telemetry compliance"]
+    },
+    "45-54": {
+      "label": "Hospital Directors & Health IT Executives",
+      "tone": "Cost reduction, liability mitigation, systemic risk prevention",
+      "primary_call_to_action": "Schedule Clinical Pilot Discovery",
+      "key_differentiators": ["Incident prevention ROI", "Zero-downtime integration"]
+    },
+    "55-64": {
+      "label": "Academic Deans & Ministry Evaluators",
+      "tone": "National health impact, Egyptian clinical guidelines, peer-reviewed rigor",
+      "primary_call_to_action": "Download Academic Whitepaper",
+      "key_differentiators": ["Pharos University Faculty of AI & Medicine", "Dr. Mohamed Abdou Dean supervision"]
+    },
+    "65+": {
+      "label": "Patient Advocacy & Emeritus Consultants",
+      "tone": "Patient dignity, gentle hemodialysis, safety-first monitoring",
+      "primary_call_to_action": "Read Patient Protection Charter",
+      "key_differentiators": ["Intradialytic hypotension anticipation", "Personalized dry-weight trajectory"]
+    }
+  },
+  "generation_targets": {
+    "landing_variants": {
+      "selectors": [".hero-title", ".hero-subtitle", ".btn-primary", ".badge-chip", "#dual-shield-pillars"]
+    },
+    "blog_posts": {
+      "target_dir": "dashboard/src/pages/blog",
+      "format": "astro_mdx"
+    }
+  }
+}
