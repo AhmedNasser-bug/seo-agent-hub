@@ -1,8 +1,9 @@
 {
-  "operator": "jules-core",
-  "auth_provider": "google_oauth",
+  "adapter": "jules",
+  "status": "sunsetting",
+  "sunset_scheduled": true,
+  "sunset_notice": "Jules is scheduled for sunset. Antigravity remote sessions is the active primary engine.",
+  "fallback_target": "antigravity",
   "extension_path": "./skills/jules-extension",
-  "session_status": "authenticated",
-  "manifest_path": "/home/antigravity/AhmedNasser-bug/Grad_project_landing/seo-agent-hub/config/jules.manifest.json",
-  "updated_at": "2026-11-09T15:55:44Z"
+  "updated_at": "2026-11-11T11:23:07Z"
 }

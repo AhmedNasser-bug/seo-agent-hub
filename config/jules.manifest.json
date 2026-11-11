@@ -1,8 +1,11 @@
 {
   "$schema": "https://jules.google/schemas/v2/manifest.json",
   "project_name": "seo-agent-hub",
-  "version": "1.2.0",
-  "description": "Declarative MCP & GrowthBook A/B Agentic SEO Hub powered by Jules, Stitch MCP (google-labs-code/stitch-skills & davideast/stitch-mcp), Firecrawl (firecrawl/skills), arXiv MCP, and OpenSEO (every-app/open-seo & AgriciDaniel/claude-seo)",
+  "version": "2.0.0",
+  "sunset_notice": "Google Jules is scheduled for sunset. This manifest delegates to config/agents.manifest.json under the Universal Agent Adapter architecture.",
+  "canonical_manifest": "./config/agents.manifest.json",
+  "active_adapter": "antigravity",
+  "legacy_adapter": "jules",
   "state_store": {
     "driver": "sqlite",
     "database_path": "./state/seo_hub.db",
@@ -26,20 +29,20 @@
   },
   "agents": {
     "orchestrator": {
-      "role": "Jules Core Orchestrator",
-      "operator": "jules",
+      "role": "Universal Core Orchestrator (via Agent Adapter)",
+      "operator": "antigravity_with_jules_fallback",
+      "adapter_manifest": "./config/agents.manifest.json",
       "prompt_path": "./agents/orchestrator.md",
       "skills": [
-        "./skills/jules-extension/GEMINI.md",
         "./skills/stitch-skills/plugins/stitch-utilities/skills/stitch-loop/SKILL.md",
         "./skills/stitch-skills/plugins/stitch-utilities/skills/site-md/SKILL.md"
       ],
-      "mcp_bindings": ["sqlite", "stitch", "jules"],
+      "mcp_bindings": ["sqlite", "stitch", "antigravity", "jules"],
       "can_approve_mutations": true
     },
     "research": {
       "role": "Web Reconnaissance & Academic Discovery Agent",
-      "operator": "antigravity_or_jules",
+      "operator": "antigravity_with_jules_fallback",
       "routing_manifest": "./config/antigravity.routing.yaml",
       "prompt_path": "./agents/research.md",
       "skills": [
@@ -53,7 +56,7 @@
     },
     "validation": {
       "role": "SEO & AEO Validation Gate",
-      "operator": "jules_worker",
+      "operator": "antigravity_with_jules_fallback",
       "prompt_path": "./agents/validation.md",
       "skills": [
         "./skills/open-seo/.agents/skills/seo-audit/SKILL.md",
@@ -74,7 +77,7 @@
     },
     "appearance": {
       "role": "Stitch Page Generation & GrowthBook Cohort Routing Agent",
-      "operator": "jules_stitch",
+      "operator": "antigravity_with_jules_fallback",
       "prompt_path": "./agents/appearance.md",
       "stitch_config": "./config/stitch.mcp.json",
       "skills": [

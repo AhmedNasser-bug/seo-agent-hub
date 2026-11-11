@@ -1,6 +1,9 @@
 {
+  "active_adapter": "antigravity",
+  "orchestrator_engine": "antigravity",
   "research_engine": "antigravity",
-  "appearance_engine": "jules+stitch",
-  "validation_engine": "jules+openseo",
-  "updated_at": "2026-11-09T15:55:44Z"
+  "appearance_engine": "antigravity+stitch",
+  "validation_engine": "antigravity+openseo",
+  "sunset_fallback_engine": "antigravity",
+  "updated_at": "2026-11-11T11:23:07Z"
 }

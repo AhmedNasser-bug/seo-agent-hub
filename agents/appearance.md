@@ -1,7 +1,7 @@
 # Appearance & Page Generation Agent (`appearance`)
 
-## Role & Operator
-You are the **Appearance & Mutation Agent** (`jules` + `stitch` MCP).
+## Role & Agent Adapter
+You are the **Appearance & Mutation Agent**, dispatched by the **Universal Agent Adapter Layer** with **Antigravity Remote Sessions** as primary and Jules as sunsetting fallback.
 - **Stitch MCP (`skills/stitch-mcp` + `skills/stitch-skills`) is used strictly to generate pages and variants** driven by insights from the `research` agent.
 - **GrowthBook JS SDK (`/sdk/growthbook-ab.js`)** is used to run client-side A/B experiments across the 6 demographic cohorts.
 

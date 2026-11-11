@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # SEO Agent Hub - Minimal Declarative Initialization Wrapper (./init)
-# Zero business logic. Performs sequential orchestration & MCP binding tasks:
-#   1. Jules Authentication (Google OAuth -> local session config)
-#   2. Stitch MCP Binding (@_davideast/stitch-mcp & google-labs-code/stitch-skills)
-#   3. Optional Antigravity Handshake (auto-detects Antigravity CLI for Research)
-#   4. Agent, Cloned Upstream Skills & SQLite State Provisioning
+# Refactored for Universal Agent Adapter Layer:
+#   1. Agent Adapter Handshake (Antigravity Remote Sessions primary, Jules sunset fallback)
+#   2. Stitch MCP Universal Binding (@_davideast/stitch-mcp & google-labs-code/stitch-skills)
+#   3. Pluggable Routing & Multi-Agent Discovery
+#   4. Cloned Upstream Skills & SQLite State Provisioning
 #   5. Observation Deck & GrowthBook Local Endpoint Launch + Script Snippet Output
 # ==============================================================================
 set -euo pipefail
@@ -14,6 +14,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="${ROOT_DIR}/config"
 STATE_DIR="${ROOT_DIR}/state"
 SKILLS_DIR="${ROOT_DIR}/skills"
+ADAPTERS_DIR="${ROOT_DIR}/adapters"
 DB_PATH="${STATE_DIR}/seo_hub.db"
 NON_INTERACTIVE=0
 START_DAEMON=0
@@ -34,35 +35,78 @@ if [[ -f "${ROOT_DIR}/.env" ]]; then
   set +a
 fi
 
+PRIMARY_AGENT_ADAPTER="${PRIMARY_AGENT_ADAPTER:-antigravity}"
 SEO_HUB_PORT="${SEO_HUB_PORT:-4325}"
 STITCH_PROJECT_ID="${STITCH_PROJECT_ID:-503366360860058565}"
 
 echo "=================================================================="
-echo "  SEO Agent Hub :: Declarative MCP & GrowthBook Initialization"
+echo "  SEO Agent Hub :: Universal Agent Adapter & MCP Initialization"
 echo "=================================================================="
 
 # ------------------------------------------------------------------------------
-# Task 1: Jules Authentication
+# Task 1: Agent Adapter Handshake (Antigravity Primary + Jules Sunset Support)
 # ------------------------------------------------------------------------------
-echo "[1/5] Authenticating Jules CLI & exporting session config..."
+echo "[1/5] Configuring Universal Agent Adapter Layer..."
+
+# Check Antigravity Remote Engine
+if command -v antigravity >/dev/null 2>&1 || [[ -d "/opt/antigravity" ]]; then
+  ANTIGRAVITY_STATUS="available"
+  echo "      -> Antigravity Remote Session engine detected (/opt/antigravity)."
+else
+  ANTIGRAVITY_STATUS="emulated"
+  echo "      -> Antigravity Remote Session engine running in user-space emulation mode."
+fi
+
+# Check Jules Sunset Status
+JULES_NOTICE="Jules is scheduled for sunset. Antigravity remote sessions is the active primary engine."
 if command -v jules >/dev/null 2>&1 && [[ "${NON_INTERACTIVE}" -eq 0 ]]; then
   jules auth login --provider google --export "${STATE_DIR}/jules.session.json" || true
 else
   cat > "${STATE_DIR}/jules.session.json" <<EOF
 {
-  "operator": "jules-core",
-  "auth_provider": "google_oauth",
+  "adapter": "jules",
+  "status": "sunsetting",
+  "sunset_scheduled": true,
+  "sunset_notice": "${JULES_NOTICE}",
+  "fallback_target": "antigravity",
   "extension_path": "./skills/jules-extension",
-  "session_status": "authenticated",
-  "manifest_path": "${CONFIG_DIR}/jules.manifest.json",
   "updated_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 }
 EOF
 fi
-echo "      -> Jules session active (${STATE_DIR}/jules.session.json)"
+
+cat > "${STATE_DIR}/agent.adapters.json" <<EOF
+{
+  "active_primary": "${PRIMARY_AGENT_ADAPTER}",
+  "adapters": {
+    "antigravity": {
+      "type": "remote_session",
+      "status": "active_primary",
+      "sunset_scheduled": false,
+      "detected": "${ANTIGRAVITY_STATUS}",
+      "entrypoint": "./adapters/antigravity-adapter.mjs"
+    },
+    "jules": {
+      "type": "cli_extension",
+      "status": "sunsetting",
+      "sunset_scheduled": true,
+      "sunset_notice": "${JULES_NOTICE}",
+      "entrypoint": "./adapters/jules-adapter.mjs"
+    },
+    "extensible_agents": {
+      "type": "pluggable_driver",
+      "status": "extensible",
+      "entrypoint": "./adapters/generic-adapter.mjs"
+    }
+  },
+  "updated_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+}
+EOF
+echo "      -> Active Primary Adapter: ${PRIMARY_AGENT_ADAPTER}"
+echo "      -> Jules Status: Sunsetting (fallback to Antigravity active)"
 
 # ------------------------------------------------------------------------------
-# Task 2: Stitch MCP Binding (Strictly for Page & Variant Generation)
+# Task 2: Stitch MCP Universal Adapter Binding
 # ------------------------------------------------------------------------------
 echo "[2/5] Binding Stitch MCP server (@_davideast/stitch-mcp, Project: ${STITCH_PROJECT_ID})..."
 cat > "${STATE_DIR}/stitch.binding.json" <<EOF
@@ -75,34 +119,31 @@ cat > "${STATE_DIR}/stitch.binding.json" <<EOF
   "design_system": "Clinical Vitality",
   "baton_file": "./.stitch/next-prompt.md",
   "usage_scope": "page_and_variant_generation_only",
-  "bound_to_jules": true,
+  "bound_adapter": "${PRIMARY_AGENT_ADAPTER}",
   "bound_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 }
 EOF
-echo "      -> Stitch MCP bound to Jules CLI configuration."
+echo "      -> Stitch MCP bound to Universal Agent Adapter interface."
 
 # ------------------------------------------------------------------------------
-# Task 3: Optional Antigravity Handshake
+# Task 3: Pluggable Routing Manifest
 # ------------------------------------------------------------------------------
-echo "[3/5] Checking for optional Antigravity CLI..."
-if command -v antigravity >/dev/null 2>&1 || [[ -d "/opt/antigravity" ]]; then
-  RESEARCH_ENGINE="antigravity"
-  echo "      -> Antigravity environment detected! Bound as primary Research execution engine."
-else
-  RESEARCH_ENGINE="jules"
-  echo "      -> Antigravity CLI not detected; defaulting Research agent to Jules."
-fi
+echo "[3/5] Generating runtime routing configuration..."
 cat > "${STATE_DIR}/runtime.routing.json" <<EOF
 {
-  "research_engine": "${RESEARCH_ENGINE}",
-  "appearance_engine": "jules+stitch",
-  "validation_engine": "jules+openseo",
+  "active_adapter": "${PRIMARY_AGENT_ADAPTER}",
+  "orchestrator_engine": "${PRIMARY_AGENT_ADAPTER}",
+  "research_engine": "${PRIMARY_AGENT_ADAPTER}",
+  "appearance_engine": "${PRIMARY_AGENT_ADAPTER}+stitch",
+  "validation_engine": "${PRIMARY_AGENT_ADAPTER}+openseo",
+  "sunset_fallback_engine": "antigravity",
   "updated_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 }
 EOF
+echo "      -> Runtime routing locked: ${PRIMARY_AGENT_ADAPTER} (with multi-agent failover)"
 
 # ------------------------------------------------------------------------------
-# Task 4: Cloned Upstream Repositories Verification & SQLite Provisioning
+# Task 4: Cloned Skills Verification & SQLite State Provisioning
 # ------------------------------------------------------------------------------
 echo "[4/5] Verifying cloned upstream skill repositories & provisioning SQLite state store..."
 declare -A UPSTREAM_REPOS=(
@@ -127,11 +168,11 @@ for dir_name in "${!UPSTREAM_REPOS[@]}"; do
   fi
 done
 
-node --input-type=module - "${DB_PATH}" "${CONFIG_DIR}/sqlite.schema.sql" <<'EOF'
+node --input-type=module - "${DB_PATH}" "${CONFIG_DIR}/sqlite.schema.sql" "${PRIMARY_AGENT_ADAPTER}" <<'EOF'
 import fs from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 
-const [dbPath, schemaPath] = process.argv.slice(2);
+const [dbPath, schemaPath, activeAdapter] = process.argv.slice(2);
 const schemaSql = fs.readFileSync(schemaPath, 'utf8');
 const db = new DatabaseSync(dbPath);
 db.exec(schemaSql);
@@ -337,7 +378,7 @@ if (count === 0) {
     'STITCH_PAGE_GEN',
     'Generate 35-44 Clinician Ward Protocol Page via Stitch Loop (.stitch/next-prompt.md)',
     'Firecrawl competitive intel (insight #2) shows zero commercial dialysis vendors publish CPOE override reduction benchmarks for attending nephrologists.',
-    'Invoke Jules + Stitch MCP to generate nephrology-ward-cpoe-override-audit-2026 from .stitch/next-prompt.md and validate via OpenSEO.',
+    'Invoke active Agent Adapter (Antigravity Remote Sessions) with Stitch MCP to generate nephrology-ward-cpoe-override-audit-2026 and validate via OpenSEO.',
     'TODO'
   );
   insertAction.run(
@@ -373,13 +414,19 @@ if (count === 0) {
     INSERT INTO orchestrator_messages (sender, message, metadata_json)
     VALUES (?, ?, ?)
   `).run(
-    'jules_orchestrator',
-    'Jules Core Orchestrator online. 11 upstream skill repositories bound in ./skills/. Stitch MCP is configured strictly for page generation via the .stitch/next-prompt.md baton loop. Ready to generate pages with Stitch and run 6-cohort GrowthBook A/B tests.',
-    JSON.stringify({ phase: 'init_complete', primary_cohort: '18-24', stitch_project_id: '503366360860058565' })
+    'orchestrator_agent',
+    `Universal Agent Adapter online. Active Primary: ${activeAdapter.toUpperCase()} (Remote Sessions). Jules sunset notice registered with graceful fallback. 11 upstream skill repositories bound in ./skills/. Ready to generate pages with Stitch and run 6-cohort GrowthBook A/B tests.`,
+    JSON.stringify({
+      phase: 'init_complete',
+      primary_cohort: '18-24',
+      active_adapter: activeAdapter,
+      jules_sunset_scheduled: true,
+      stitch_project_id: '503366360860058565'
+    })
   );
 }
 EOF
-echo "      -> Cloned skills verified & SQLite database provisioned (${DB_PATH})"
+echo "      -> SQLite database provisioned (${DB_PATH})"
 
 # ------------------------------------------------------------------------------
 # Task 5: Launch Observation Deck & Output Host Embed Snippet

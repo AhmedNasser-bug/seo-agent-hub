@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DatabaseSync } from 'node:sqlite';
+import { agentRegistry, GenericAgentAdapter } from '../adapters/index.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -57,8 +58,76 @@ test('1. Cloned Upstream Skill Repositories Verification (Zero Custom Rewrites)'
   );
 });
 
-test('2. Jules + Stitch MCP Creates Data-Driven Pages for Grad_project_landing (.stitch/ Baton Loop)', async () => {
-  // Step 2a: Make Jules create the 35-44 Nephrology Ward Protocol page using Stitch MCP
+test('2. Universal Agent Adapter Layer: Antigravity Primary, Jules Sunset & Dynamic Switching', async () => {
+  // Step 2a: Query registered adapters
+  const res = await fetchWithTimeout(`${BASE_URL}/api/adapters`);
+  assert.equal(res.status, 200);
+  const data = await res.json();
+
+  assert.equal(data.active_primary, 'antigravity');
+  assert.equal(data.active_adapter.name, 'antigravity');
+  assert.equal(data.active_adapter.type, 'remote_session');
+  assert.equal(data.active_adapter.sunsetScheduled, false);
+
+  const julesInfo = data.adapters.find((a) => a.name === 'jules');
+  assert.ok(julesInfo, 'Jules adapter should be registered');
+  assert.equal(julesInfo.sunsetScheduled, true, 'Jules must have sunsetScheduled: true');
+  assert.match(julesInfo.sunsetNotice, /sunset/i);
+
+  // Step 2b: Switch active adapter to Jules
+  const switchRes = await fetchWithTimeout(`${BASE_URL}/api/adapters/select`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adapter: 'jules' })
+  });
+  assert.equal(switchRes.status, 200);
+  const switchData = await switchRes.json();
+  assert.equal(switchData.ok, true);
+  assert.equal(switchData.switched.current, 'jules');
+
+  // Verify chat turn reflects Jules sunsetting engine
+  const chatJulesRes = await fetchWithTimeout(`${BASE_URL}/api/orchestrator/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: 'Status check while on Jules adapter' })
+  });
+  assert.equal(chatJulesRes.status, 200);
+  const chatJulesData = await chatJulesRes.json();
+  assert.match(chatJulesData.reply, /Jules/i);
+
+  // Step 2c: Switch active adapter back to Antigravity (primary)
+  const switchBackRes = await fetchWithTimeout(`${BASE_URL}/api/adapters/select`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adapter: 'antigravity' })
+  });
+  assert.equal(switchBackRes.status, 200);
+  const switchBackData = await switchBackRes.json();
+  assert.equal(switchBackData.switched.current, 'antigravity');
+
+  // Verify unknown adapter rejection
+  const badSwitchRes = await fetchWithTimeout(`${BASE_URL}/api/adapters/select`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adapter: 'non-existent-agent' })
+  });
+  assert.equal(badSwitchRes.status, 400);
+
+  // Step 2d: Test pluggable generic adapter registration
+  const customAgent = new GenericAgentAdapter({
+    name: 'claude-code',
+    displayName: 'Anthropic Claude Code Driver',
+    type: 'cli_runner'
+  });
+  agentRegistry.register(customAgent);
+  assert.equal(agentRegistry.has('claude-code'), true);
+  const customCapabilities = customAgent.getCapabilities();
+  assert.equal(customCapabilities.name, 'claude-code');
+  assert.equal(customCapabilities.sunsetScheduled, false);
+});
+
+test('3. Data-Driven Page Creation via Stitch Baton Loop (.stitch/) using Active Adapter', async () => {
+  // Step 3a: Generate 35-44 Nephrology Ward Protocol page via Stitch MCP
   const genRes = await fetchWithTimeout(`${BASE_URL}/api/stitch/generate-page`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -77,9 +146,10 @@ test('2. Jules + Stitch MCP Creates Data-Driven Pages for Grad_project_landing (
   assert.equal(genData.ok, true);
   assert.equal(genData.generated.page_slug, 'nephrology-ward-cpoe-override-audit-2026');
   assert.equal(genData.generated.target_cohort, '35-44');
+  assert.equal(genData.generated.adapter, 'antigravity');
   assert.ok(genData.generated.openseo_score >= 95);
 
-  // Verify Stitch staging file, SDK published file, and Host Astro page were all created
+  // Verify Stitch staging file, SDK published file, and Host Astro page exist
   assert.equal(
     fs.existsSync(path.join(ROOT_DIR, '.stitch', 'designs', 'nephrology-ward-cpoe-override-audit-2026.html')),
     true
@@ -93,7 +163,7 @@ test('2. Jules + Stitch MCP Creates Data-Driven Pages for Grad_project_landing (
     true
   );
 
-  // Step 2b: Instruct Jules Orchestrator via Chat to create a second page using Stitch for Cohort 25-34
+  // Step 3b: Instruct Orchestrator via Chat to create a page for Cohort 25-34
   const chatGenRes = await fetchWithTimeout(`${BASE_URL}/api/orchestrator/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -102,7 +172,7 @@ test('2. Jules + Stitch MCP Creates Data-Driven Pages for Grad_project_landing (
       cohort: '25-34',
       insight_id: 3,
       page_slug: 'edge-onnx-dialysis-telemetry-benchmarks-2026',
-      message: 'Jules, create page with Stitch for 25-34 clinical engineering cohort using arXiv edge ONNX insight'
+      message: 'Create page with Stitch for 25-34 clinical engineering cohort using arXiv edge ONNX insight'
     })
   });
   assert.equal(chatGenRes.status, 200);
@@ -110,15 +180,16 @@ test('2. Jules + Stitch MCP Creates Data-Driven Pages for Grad_project_landing (
   assert.equal(chatGenData.ok, true);
   assert.match(chatGenData.reply, /edge-onnx-dialysis-telemetry-benchmarks-2026/);
 
-  // Verify the page is live and downloadable from the server
+  // Verify the page is served and includes the active engine attribution
   const previewRes = await fetchWithTimeout(`${BASE_URL}/sdk/generated-pages/nephrology-ward-cpoe-override-audit-2026.html`);
   assert.equal(previewRes.status, 200);
   const previewHtml = await previewRes.text();
   assert.match(previewHtml, /Zero-Override Dialysis Ward Protocol/);
+  assert.match(previewHtml, /Antigravity Remote Sessions/);
   assert.match(previewHtml, /0\.941 AUROC/);
 });
 
-test('3. Six-Cohort GrowthBook A/B Routing & Conversion Tracking', async () => {
+test('4. Six-Cohort GrowthBook A/B Routing & Conversion Tracking', async () => {
   const cohorts = ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
   for (const cohort of cohorts) {
     const res = await fetchWithTimeout(`${BASE_URL}/api/experiments?cohort=${encodeURIComponent(cohort)}`);
@@ -143,7 +214,7 @@ test('3. Six-Cohort GrowthBook A/B Routing & Conversion Tracking', async () => {
   assert.ok(evData.conversions >= 69);
 });
 
-test('4. Jules Orchestrator Approval / Rollback Loop & WAF SEC-04 CanNotDelete Lock', async () => {
+test('5. Orchestrator Approval / Rollback Loop & WAF SEC-04 CanNotDelete Lock', async () => {
   // Approve 18-24 cohort experiment
   const approveRes = await fetchWithTimeout(`${BASE_URL}/api/orchestrator/chat`, {
     method: 'POST',

@@ -1,0 +1,138 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/2026-02/agents-manifest.json",
+  "project_name": "seo-agent-hub",
+  "version": "2.0.0",
+  "architecture": "Pluggable Agent Adapter Layer (Antigravity Remote Sessions + Jules Sunset Support + Extensible Agents)",
+  "default_adapter": "antigravity",
+  "sunset_timeline": {
+    "jules": {
+      "sunset_scheduled": true,
+      "status": "sunsetting",
+      "sunset_notice": "Google Jules is scheduled for sunset. Antigravity remote sessions is the active primary execution engine.",
+      "migration_target": "antigravity"
+    }
+  },
+  "adapters": {
+    "antigravity": {
+      "display_name": "Antigravity Remote Sessions",
+      "type": "remote_session",
+      "status": "active_primary",
+      "entrypoint": "./adapters/antigravity-adapter.mjs",
+      "supported_roles": ["orchestrator", "research", "appearance", "validation"],
+      "recommended": true,
+      "metadata": {
+        "runtime_env": "jetski_remote_agents_3p",
+        "cli_path": "/opt/antigravity/bin",
+        "supports_subagents": true,
+        "supports_parallel_mcp": true
+      }
+    },
+    "jules": {
+      "display_name": "Google Jules CLI (Sunsetting)",
+      "type": "cli_extension",
+      "status": "sunsetting",
+      "sunset_scheduled": true,
+      "entrypoint": "./adapters/jules-adapter.mjs",
+      "extension_path": "./skills/jules-extension",
+      "supported_roles": ["orchestrator", "research", "appearance", "validation"],
+      "recommended": false,
+      "metadata": {
+        "fallback_adapter": "antigravity"
+      }
+    },
+    "extensible_agents": {
+      "display_name": "Future Pluggable Agents (Claude Code, Gemini CLI, Custom MCP)",
+      "type": "pluggable_driver",
+      "status": "extensible",
+      "entrypoint": "./adapters/generic-adapter.mjs",
+      "supported_roles": ["orchestrator", "research", "appearance", "validation"]
+    }
+  },
+  "state_store": {
+    "driver": "sqlite",
+    "database_path": "./state/seo_hub.db",
+    "schema_path": "./config/sqlite.schema.sql",
+    "pool_isolation": {
+      "orchestrator_tier": "read_write_primary",
+      "research_tier": "write_isolated",
+      "validation_tier": "read_audit"
+    }
+  },
+  "demographics": {
+    "primary_testing_cohort": "18-24",
+    "cohorts": [
+      "18-24",
+      "25-34",
+      "35-44",
+      "45-54",
+      "55-64",
+      "65+"
+    ]
+  },
+  "agent_roles": {
+    "orchestrator": {
+      "role": "Universal Core Orchestrator",
+      "preferred_adapter": "antigravity",
+      "fallback_adapter": "jules",
+      "prompt_path": "./agents/orchestrator.md",
+      "skills": [
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/stitch-loop/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/site-md/SKILL.md"
+      ],
+      "mcp_bindings": ["sqlite", "stitch", "antigravity", "jules"],
+      "can_approve_mutations": true
+    },
+    "research": {
+      "role": "Web Reconnaissance & Academic Discovery Agent",
+      "preferred_adapter": "antigravity",
+      "fallback_adapter": "jules",
+      "routing_manifest": "./config/antigravity.routing.yaml",
+      "prompt_path": "./agents/research.md",
+      "skills": [
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-competitive-intel/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-research-papers/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-lead-gen/SKILL.md",
+        "./skills/open-seo/.agents/skills/keyword-research/SKILL.md",
+        "./skills/open-seo/.agents/skills/competitor-analysis/SKILL.md"
+      ],
+      "mcp_bindings": ["firecrawl", "arxiv", "sqlite"]
+    },
+    "validation": {
+      "role": "SEO & AEO Validation Gate",
+      "preferred_adapter": "antigravity",
+      "fallback_adapter": "jules",
+      "prompt_path": "./agents/validation.md",
+      "skills": [
+        "./skills/open-seo/.agents/skills/seo-audit/SKILL.md",
+        "./skills/open-seo/.agents/skills/seo-report/SKILL.md",
+        "./skills/claude-seo/skills/seo-audit/SKILL.md",
+        "./skills/claude-seo/skills/seo-page/SKILL.md",
+        "./skills/claude-seo/skills/seo-geo/SKILL.md",
+        "./skills/agentic-seo-skill/SKILL.md",
+        "./skills/firecrawl-skills/skills/workflows/firecrawl-seo-audit/SKILL.md"
+      ],
+      "mcp_bindings": ["openseo", "sqlite"],
+      "thresholds": {
+        "min_openseo_score": 88,
+        "min_unlighthouse_seo": 90,
+        "require_llms_txt": true,
+        "require_robots_txt": true
+      }
+    },
+    "appearance": {
+      "role": "Stitch Page Generation & GrowthBook Cohort Routing Agent",
+      "preferred_adapter": "antigravity",
+      "fallback_adapter": "jules",
+      "prompt_path": "./agents/appearance.md",
+      "stitch_config": "./config/stitch.mcp.json",
+      "skills": [
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/stitch-loop/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/generate-design/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/design-md/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-design/skills/enhance-prompt/SKILL.md",
+        "./skills/stitch-skills/plugins/stitch-utilities/skills/extract-static-html/SKILL.md"
+      ],
+      "mcp_bindings": ["stitch", "sqlite"]
+    }
+  }
+}

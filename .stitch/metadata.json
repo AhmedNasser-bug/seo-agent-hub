@@ -17,10 +17,11 @@
       "status": "AB_TESTING"
     },
     "nephrology-ward-cpoe-override-audit-2026": {
-      "id": "stitch-screen-nephrology-ward-cpoe-ove-1179",
+      "id": "stitch-screen-nephrology-ward-cpoe-ove-9506",
       "pageSlug": "nephrology-ward-cpoe-override-audit-2026",
       "targetCohort": "35-44",
       "sourceInsightId": 2,
+      "generatedByAdapter": "antigravity",
       "width": 1440,
       "height": 2400,
       "htmlPath": "sdk/generated-pages/nephrology-ward-cpoe-override-audit-2026.html",
@@ -28,10 +29,11 @@
       "status": "AB_TESTING"
     },
     "edge-onnx-dialysis-telemetry-benchmarks-2026": {
-      "id": "stitch-screen-edge-onnx-dialysis-telem-1297",
+      "id": "stitch-screen-edge-onnx-dialysis-telem-9537",
       "pageSlug": "edge-onnx-dialysis-telemetry-benchmarks-2026",
       "targetCohort": "25-34",
       "sourceInsightId": 3,
+      "generatedByAdapter": "antigravity",
       "width": 1440,
       "height": 2400,
       "htmlPath": "sdk/generated-pages/edge-onnx-dialysis-telemetry-benchmarks-2026.html",

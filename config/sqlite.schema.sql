@@ -105,10 +105,10 @@ CREATE TABLE IF NOT EXISTS action_items (
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- 7. Jules Orchestrator Conversation Log
+-- 7. Universal Orchestrator Conversation Log
 CREATE TABLE IF NOT EXISTS orchestrator_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sender TEXT NOT NULL CHECK(sender IN ('user', 'jules_orchestrator', 'research_agent', 'validation_agent', 'appearance_agent')),
+    sender TEXT NOT NULL CHECK(sender IN ('user', 'orchestrator_agent', 'antigravity_orchestrator', 'jules_orchestrator', 'research_agent', 'validation_agent', 'appearance_agent')),
     message TEXT NOT NULL,
     metadata_json TEXT NOT NULL DEFAULT '{}',
     created_at TEXT NOT NULL DEFAULT (datetime('now'))

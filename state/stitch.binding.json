@@ -7,6 +7,6 @@
   "design_system": "Clinical Vitality",
   "baton_file": "./.stitch/next-prompt.md",
   "usage_scope": "page_and_variant_generation_only",
-  "bound_to_jules": true,
-  "bound_at": "2026-11-09T15:55:44Z"
+  "bound_adapter": "antigravity",
+  "bound_at": "2026-11-11T11:23:07Z"
 }

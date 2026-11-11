@@ -1,0 +1,25 @@
+{
+  "active_primary": "antigravity",
+  "adapters": {
+    "antigravity": {
+      "type": "remote_session",
+      "status": "active_primary",
+      "sunset_scheduled": false,
+      "detected": "available",
+      "entrypoint": "./adapters/antigravity-adapter.mjs"
+    },
+    "jules": {
+      "type": "cli_extension",
+      "status": "sunsetting",
+      "sunset_scheduled": true,
+      "sunset_notice": "Jules is scheduled for sunset. Antigravity remote sessions is the active primary engine.",
+      "entrypoint": "./adapters/jules-adapter.mjs"
+    },
+    "extensible_agents": {
+      "type": "pluggable_driver",
+      "status": "extensible",
+      "entrypoint": "./adapters/generic-adapter.mjs"
+    }
+  },
+  "updated_at": "2026-11-11T11:23:07Z"
+}

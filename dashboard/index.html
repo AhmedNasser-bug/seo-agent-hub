@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SEO Agent Hub :: Observation Deck (Jules + Stitch MCP + OpenSEO + GrowthBook)</title>
+  <title>SEO Agent Hub :: Observation Deck (Universal Agent Adapter + Stitch MCP + OpenSEO + GrowthBook)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -16,6 +16,7 @@
       --text-muted: #475569;
       --accent-teal: #0D9488;
       --accent-coral: #E11D48;
+      --accent-amber: #D97706;
       --border-subtle: rgba(15, 23, 42, 0.09);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,6 +40,12 @@
       padding: 0.35rem 0.9rem; border-radius: 9999px;
       background: rgba(13, 148, 136, 0.12); color: var(--accent-teal);
     }
+    .badge-sunset {
+      background: rgba(217, 119, 6, 0.15); color: var(--accent-amber);
+    }
+    .badge-primary {
+      background: rgba(13, 148, 136, 0.18); color: var(--accent-teal); font-weight: 700;
+    }
     h1 {
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: clamp(2.1rem, 3.6vw, 3.1rem);
@@ -60,6 +67,10 @@
     .card-dark {
       background: var(--bg-dark); color: #F8FAFC;
       border-radius: 20px; padding: 1.5rem;
+    }
+    .card-warning {
+      background: #FEF3C7; border: 1px solid #F59E0B; color: #92400E;
+      border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;
     }
     .btn-pill {
       cursor: pointer; border: none; border-radius: 9999px;
@@ -94,19 +105,33 @@
     <nav class="pill-nav">
       <div>
         <strong>SEO Agent Hub</strong>
-        <span style="color:var(--text-muted);font-size:0.88rem;margin-left:0.5rem;">Declarative MCP + Stitch Page Loop + GrowthBook A/B</span>
+        <span style="color:var(--text-muted);font-size:0.88rem;margin-left:0.5rem;">Universal Agent Adapter + Stitch Page Loop + GrowthBook A/B</span>
       </div>
       <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        <span class="badge-pill badge-primary" id="active-adapter-badge">ADAPTER: ANTIGRAVITY (PRIMARY)</span>
         <span class="badge-pill">Stitch Project: <span id="stitch-proj-id">503366360860058565</span></span>
-        <span class="badge-pill">Primary Cohort: 18-24</span>
-        <button class="btn-pill" onclick="triggerStitchPageGen()">+ Generate Page via Jules + Stitch MCP</button>
+        <button class="btn-pill" onclick="triggerStitchPageGen()">+ Generate Page via Active Adapter</button>
       </div>
     </nav>
 
+    <!-- Adapter Switcher & Sunset Notice Banner -->
+    <div class="card-warning" id="sunset-banner" style="display:none;">
+      <strong>⚠️ Agent Architecture Notice:</strong>
+      <span id="sunset-text">Google Jules is scheduled for sunset. Antigravity remote sessions is currently active as the primary execution engine.</span>
+      <div style="margin-top:0.6rem;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        <label for="adapter-selector" style="font-size:0.82rem;font-weight:600;">Active Agent Engine:</label>
+        <select id="adapter-selector" style="padding:0.35rem 0.85rem;border-radius:9999px;background:#FFF;color:#0F172A;border:1px solid #D97706;font-size:0.82rem;" onchange="switchAdapter(this.value)">
+          <option value="antigravity">Antigravity Remote Sessions (Active Primary)</option>
+          <option value="jules">Google Jules CLI (Sunsetting)</option>
+        </select>
+        <span class="mono" style="font-size:0.75rem;color:#78350F;">Zero downtime failover enabled.</span>
+      </div>
+    </div>
+
     <header style="margin-bottom: 1.5rem;">
-      <h1>Unified <em>Observation Deck</em> &amp; Jules Orchestrator Stream</h1>
+      <h1>Unified <em>Observation Deck</em> &amp; Multi-Agent Stream</h1>
       <p style="color:var(--text-muted);max-width:860px;">
-        Research agents (<strong>Firecrawl</strong> + <strong>arXiv MCP</strong>) gather competitive &amp; clinical evidence, <strong>Jules + Stitch MCP</strong> synthesize new pages using the <code>.stitch/next-prompt.md</code> baton protocol, <strong>OpenSEO</strong> validates search/AEO compliance, and <strong>GrowthBook</strong> runs 6-cohort A/B experiments.
+        Decoupled through the <strong>Universal Agent Adapter</strong>. Research agents (<strong>Firecrawl</strong> + <strong>arXiv MCP</strong>) gather clinical &amp; competitive evidence, the active engine (<strong>Antigravity Remote Sessions</strong> or legacy Jules) synthesizes new pages using the <code>.stitch/next-prompt.md</code> baton protocol, <strong>OpenSEO</strong> audits compliance, and <strong>GrowthBook</strong> runs 6-cohort A/B testing.
       </p>
     </header>
 
@@ -115,7 +140,7 @@
       <div style="display:flex;flex-direction:column;gap:1.5rem;">
         <section class="card-white">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
-            <h2>1. Pages Created by Jules + Stitch MCP (<code>.stitch/</code> Baton Loop)</h2>
+            <h2>1. Pages Created via Stitch MCP (<code>.stitch/</code> Baton Loop)</h2>
             <div style="display:flex;gap:0.5rem;align-items:center;">
               <select id="gen-cohort-select" style="background:#F8FAFC;color:#0F172A;border:1px solid var(--border-subtle);padding:0.45rem 0.85rem;">
                 <option value="35-44">Cohort 35-44 (Attending Nephrologists)</option>
@@ -156,16 +181,16 @@
         </section>
       </div>
 
-      <!-- Right Column: Jules Orchestrator Live Chat, Action Items & Cloned Skills Registry -->
+      <!-- Right Column: Orchestrator Live Chat, Action Items & Pluggable Adapter Registry -->
       <div style="display:flex;flex-direction:column;gap:1.5rem;">
         <section class="card-dark">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
-            <h2 style="color:#fff;margin:0;">Jules Orchestrator Bridge</h2>
-            <span class="badge-pill" style="background:rgba(45,212,191,0.15);color:#2DD4BF;">LIVE MCP STREAM</span>
+            <h2 style="color:#fff;margin:0;">Universal Orchestrator Bridge</h2>
+            <span class="badge-pill" style="background:rgba(45,212,191,0.15);color:#2DD4BF;" id="chat-engine-pill">ANTIGRAVITY REMOTE</span>
           </div>
           <div class="chat-box" id="chat-box"></div>
           <div class="chat-input-row">
-            <input id="chat-input" type="text" placeholder="Ask Jules: 'Create page with Stitch for 35-44' or 'Approve 18-24'..." onkeydown="if(event.key==='Enter')sendChat()" />
+            <input id="chat-input" type="text" placeholder="Instruct Orchestrator: 'Create page with Stitch for 35-44' or 'Approve 18-24'..." onkeydown="if(event.key==='Enter')sendChat()" />
             <button class="btn-pill" onclick="sendChat()">Send</button>
           </div>
         </section>
@@ -179,6 +204,9 @@
         </section>
 
         <section class="card-white">
+          <h2>Universal Agent Adapters (Pluggable Architecture)</h2>
+          <div id="adapters-summary-list" style="margin-bottom:1rem;"></div>
+          <hr style="border:none;border-top:1px solid var(--border-subtle);margin:1rem 0;" />
           <h2>Cloned Upstream Skill Repositories (<code>./skills/</code>)</h2>
           <div id="skills-registry-list" style="font-size:0.85rem;"></div>
         </section>
@@ -191,6 +219,39 @@
       const res = await fetch('/api/state');
       const data = await res.json();
       document.getElementById('stitch-proj-id').textContent = data.stitch_project_id;
+
+      // Render Active Adapter & Sunset Notice
+      const activeAdapter = data.active_adapter;
+      const badgeEl = document.getElementById('active-adapter-badge');
+      badgeEl.textContent = `ADAPTER: ${activeAdapter.displayName.toUpperCase()} • ${activeAdapter.status.toUpperCase()}`;
+      if (activeAdapter.sunsetScheduled) {
+        badgeEl.className = 'badge-pill badge-sunset';
+      } else {
+        badgeEl.className = 'badge-pill badge-primary';
+      }
+
+      const bannerEl = document.getElementById('sunset-banner');
+      bannerEl.style.display = 'block';
+      document.getElementById('chat-engine-pill').textContent = `${activeAdapter.name.toUpperCase()} ENGINE`;
+
+      const selectorEl = document.getElementById('adapter-selector');
+      if (selectorEl) {
+        selectorEl.value = activeAdapter.name;
+      }
+
+      // Render Registered Adapters
+      const adaptersListEl = document.getElementById('adapters-summary-list');
+      adaptersListEl.innerHTML = (data.adapters || []).map(a => `
+        <div style="padding:0.55rem 0;border-bottom:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <strong>${a.displayName}</strong> <span class="mono" style="font-size:0.75rem;color:var(--text-muted);">(${a.type})</span>
+            ${a.sunsetScheduled ? '<div style="font-size:0.75rem;color:#D97706;font-weight:600;">⚠️ Sunsetting soon</div>' : '<div style="font-size:0.75rem;color:#0D9488;font-weight:600;">Active Primary Engine</div>'}
+          </div>
+          <div>
+            ${a.isActive ? '<span class="badge-pill badge-primary">ACTIVE</span>' : `<button class="btn-outline" onclick="switchAdapter('${a.name}')">Switch</button>`}
+          </div>
+        </div>
+      `).join('');
 
       // Render Stitch Generated Pages
       const pagesEl = document.getElementById('pages-list');
@@ -283,6 +344,15 @@
           <div style="font-size:0.78rem;color:var(--text-muted);">${info.upstream_repo}</div>
         </div>
       `).join('');
+    }
+
+    async function switchAdapter(adapterName) {
+      await fetch('/api/adapters/select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adapter: adapterName })
+      });
+      await loadState();
     }
 
     async function triggerStitchPageGen() {
